@@ -1,0 +1,12 @@
+package com.geonho1943.sharemylist.repository;
+
+import com.geonho1943.sharemylist.model.Potalgate;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface PotalgateRepository extends JpaRepository<Potalgate, Long> {
+
+    List<Potalgate> findAll();
+}

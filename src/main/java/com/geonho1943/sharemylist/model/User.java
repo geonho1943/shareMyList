@@ -24,43 +24,30 @@ public class User {
     @Column(name = "user_reg")
     private LocalDateTime userReg;
 
+    @Column(name = "user_privileges")
+    private int userPrivileges;
+
     public Long getUserIdx() {
         return userIdx;
-    }
-
-    public void setUserIdx(Long userIdx) {
-        this.userIdx = userIdx;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getUserPw() {
         return userPw;
-    }
-
-    public void setUserPw(String userPw) {
-        this.userPw = userPw;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public LocalDateTime getUserReg() {
         return userReg;
     }
 
-    public void setUserReg(LocalDateTime userReg) {
-        this.userReg = userReg;
+    public int getUserPrivileges() {
+        return userPrivileges;
     }
 }
