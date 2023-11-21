@@ -2,7 +2,7 @@ package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.model.Potalgate;
 import com.geonho1943.sharemylist.model.User;
-import com.geonho1943.sharemylist.service.PotalgateSrevice;
+import com.geonho1943.sharemylist.service.PotalgateService;
 import com.geonho1943.sharemylist.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +19,14 @@ public class MainController {
     @Autowired
     private UserService userService;
     @Autowired
-    private PotalgateSrevice potalgateSrevice;
+    private PotalgateService potalgateService;
 
     private final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @RequestMapping("/")
     public String main(Model model){
         try {
-            List<Potalgate> pt = potalgateSrevice.getAllPotal();
+            List<Potalgate> pt = potalgateService.getAllPotal();
             model.addAttribute("potalList", pt);
         }catch (Exception e){
             System.out.println(e);
