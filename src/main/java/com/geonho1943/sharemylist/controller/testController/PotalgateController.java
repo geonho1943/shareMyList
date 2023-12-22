@@ -1,7 +1,8 @@
 package com.geonho1943.sharemylist.controller.testController;
 
-import com.geonho1943.sharemylist.model.Potalgate;
-import com.geonho1943.sharemylist.service.PotalgateService;
+import com.geonho1943.sharemylist.dto.CardDto;
+import com.geonho1943.sharemylist.model.Card;
+import com.geonho1943.sharemylist.service.CardService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -17,37 +19,35 @@ public class PotalgateController {
 
     private final Logger logger = LoggerFactory.getLogger(PotalgateController.class);
     @Autowired
-    private PotalgateService potalgateService;
+    private CardService cardService;
 
     @GetMapping("/linkupload")
-    public String linkupload() {
+    public String linkUpload() {
         return "playlistImfomation/linkUpload";
     }
 
     @GetMapping("/stopsample")
     public String sampleGetMapping(Model model) {
-
         try {
-            List<Potalgate> pt = potalgateService.getAllPotal();
+            List<Card> pt = cardService.getAllPotal();
+            Collections.reverse(pt);
             model.addAttribute("potalList", pt);
         }catch (Exception e){
             System.out.println(e);
         }
-        return "sample/stopsample";
+        return "sample/sample";
     }
 
     @PostMapping("/submitYoutubeLink")
     public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink) {
-        String videoId = potalgateService.youtubeLinkParser(youtubeLink);
-        System.out.println(videoId);
+        String videoId = cardService.youtubeLinkParser(youtubeLink);
         // URL 파싱
-        Potalgate videoMetaData = potalgateService.getMetaDataByYoutAPI(videoId);
-        // youtube data api 요청
-        potalgateService.saveVideoMetaData(videoMetaData);
-        //  url data 저장
+        CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
+        // youtube data api 요청 > json 값을 파싱해서 Potalgate 객체 생성
+        cardService.saveVideoMetaData(videoMetaData);
+        //  DB에 저장 (jpa)
         return "redirect:/";
     }
-
 
 }
 

@@ -1,7 +1,6 @@
 package com.geonho1943.sharemylist.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
