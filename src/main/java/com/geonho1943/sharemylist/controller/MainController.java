@@ -1,5 +1,6 @@
 package com.geonho1943.sharemylist.controller;
 
+import com.geonho1943.sharemylist.dto.CardDto;
 import com.geonho1943.sharemylist.model.Card;
 import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.service.CardService;
@@ -27,20 +28,13 @@ public class MainController {
     @RequestMapping("/")
     public String main(Model model){
         try {
-            List<Card> pt = cardService.getAllPotal();
+            List<CardDto> pt = cardService.getAllCard();
             Collections.reverse(pt);
-            model.addAttribute("potalList", pt);
+            model.addAttribute("cardList", pt);
         }catch (Exception e){
             System.out.println(e);
         }
         return "home";
-    }
-
-    @RequestMapping("/test")
-    @ResponseBody
-    public List<User> test() {
-        System.out.println("test 성공");
-        return userService.getAllUsers();
     }
 
 }

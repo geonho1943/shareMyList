@@ -1,4 +1,4 @@
-package com.geonho1943.sharemylist.controller.testController;
+package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.CardDto;
 import com.geonho1943.sharemylist.model.Card;
@@ -26,18 +26,6 @@ public class PotalgateController {
         return "playlistImfomation/linkUpload";
     }
 
-    @GetMapping("/stopsample")
-    public String sampleGetMapping(Model model) {
-        try {
-            List<Card> pt = cardService.getAllPotal();
-            Collections.reverse(pt);
-            model.addAttribute("potalList", pt);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        return "sample/sample";
-    }
-
     @PostMapping("/submitYoutubeLink")
     public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink) {
         String videoId = cardService.youtubeLinkParser(youtubeLink);
@@ -50,4 +38,3 @@ public class PotalgateController {
     }
 
 }
-

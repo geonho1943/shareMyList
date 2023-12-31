@@ -12,18 +12,18 @@
 <!-- 여기까지 네비 바 -->
     <div class="container mt-5 pt-5">
         <div class="row row-cols-1 row-cols-lg-2 g-4">
-            <div th:each="potal : ${cardList}" class="col">
+            <div th:each="card : ${cardList}" class="col">
                 <div class="card">
                     <div class="row g-0">
                         <div class="col-lg-6">
-                            <img th:src="${potal.potalYoutThumNail}" class="card-img" alt="">
+                            <img th:src="${card.cardYoutThumNail}" class="card-img" alt="">
                         </div>
                         <div class="col-lg-6">
                             <div class="card-body">
                                 <strong class="card-title">Potalgate</strong>
-                                <h5 th:text="${potal.potalYoutTitle}" class="card-subtitle mb-2 text-muted">potal title
+                                <h5 th:text="${card.cardYoutTitle}" class="card-subtitle mb-2 text-muted">potal title
                                 </h5>
-                                <p th:text="${potal.PotalYoutDescription}" class="card-text">yout_description</p>
+                                <p th:text="${card.cardYoutDescription}" class="card-text">yout_description</p>
                                 <p class="card-text">regData 엔티티 없음</p>
                             </div>
                         </div>

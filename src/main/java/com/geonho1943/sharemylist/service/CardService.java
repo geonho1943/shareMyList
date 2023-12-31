@@ -8,21 +8,33 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CardService {
     @Autowired
     private CardRepository cardRepository;
 
-    public List<Card> getAllPotal(){
-        return cardRepository.findAll();
+    @Value("${api.key}")
+    private String apiKey;
+
+    public List<CardDto> getAllCard() {
+        List<Card> allCardEntity = cardRepository.findAll();
+        List<CardDto> allCardDto = new ArrayList<>();
+
+        for (Card card : allCardEntity) {
+            allCardDto.add(new CardDto(card));
+        }
+        return allCardDto;
     }
 
     public String youtubeLinkParser(String youtubeLink) {
@@ -39,12 +51,12 @@ public class CardService {
         return videoId;
     }
 
-    public Card getMetaDataByYoutAPI(String videoId) {
-        Card videoMetaData = null;
+    public CardDto getMetaDataByYoutAPI(String videoId) {
+        CardDto videoMetaData = null;
         try {
             // YouTube Data API 요청 URL 생성
             String apiUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + videoId +
-                    "&key=" + "AIzaSyBw5QDUFVZgn4wYMPRtSNkrXcpuUswsJqo" +
+                    "&key=" + apiKey +
                     "&part=snippet" +
                     "&fields=items(snippet(title,thumbnails,channelTitle))";
 
@@ -78,15 +90,15 @@ public class CardService {
                 // 여기서 필요한 썸네일 크기 선택
                 String thumbnailUrl = thumbnails.getAsJsonObject("medium").getAsJsonPrimitive("url").getAsString();
 
-                // Potalgate 객체 생성
-                videoMetaData = new Card();
+                // CardDto 객체 생성
+                videoMetaData = new CardDto();
 
                 videoMetaData.setCardYoutId(videoId);
+
                 System.out.println(videoMetaData.getCardYoutId()+" #");
                 videoMetaData.setCardPlaylistIdx(3);
-                System.out.println("playlist의 구현이 있기 전까지 test playlist에 저장됨");r
 
-                videoMetaData.setCardYoutId(title);
+                videoMetaData.setCardYoutTitle(title);
                 System.out.println(videoMetaData.getCardYoutTitle()+" #");
 
                 videoMetaData.setCardYoutChannerName(channelTitle);
@@ -105,12 +117,13 @@ public class CardService {
 
     public void saveVideoMetaData(CardDto videoMetaData) {
         try{
-            cardRepository.save(videoMetaData);
+            //DTO객체(videoMetaData)를 Entity(metaData)로 변경하여 save에 사용
+            Card metaData = new Card(videoMetaData);
+            cardRepository.save(metaData);
         }catch (Exception e){
             System.out.println(e);
         }
 
-        //DB 저장 JPA로 구현
-
     }
+
 }

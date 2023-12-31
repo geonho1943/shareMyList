@@ -1,5 +1,6 @@
 package com.geonho1943.sharemylist.model;
 
+import com.geonho1943.sharemylist.dto.CardDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -31,4 +32,49 @@ private String cardYoutDescription;
 @Column(name = "card_yout_reg_data")
 private String cardYoutRegData;
 
+    public Card() {
+    }
+
+    public Card(CardDto cardDto) {
+        this.cardIdx = cardDto.getCardIdx();
+        this.cardPlaylistIdx = cardDto.getCardPlaylistIdx();
+        this.cardYoutId = cardDto.getCardYoutId();
+        this.cardYoutTitle = cardDto.getCardYoutTitle();
+        this.cardYoutThumNail = cardDto.getCardYoutThumNail();
+        this.cardYoutChannerName = cardDto.getCardYoutChannerName();
+        this.cardYoutDescription = cardDto.getCardYoutDescription();
+        this.cardYoutRegData = cardDto.getCardYoutRegData();
+    }
+
+    public int getCardIdx() {
+        return cardIdx;
+    }
+
+    public int getCardPlaylistIdx() {
+        return cardPlaylistIdx;
+    }
+
+    public String getCardYoutId() {
+        return cardYoutId;
+    }
+
+    public String getCardYoutTitle() {
+        return cardYoutTitle;
+    }
+
+    public String getCardYoutThumNail() {
+        return cardYoutThumNail;
+    }
+
+    public String getCardYoutChannerName() {
+        return cardYoutChannerName;
+    }
+
+    public String getCardYoutDescription() {
+        return cardYoutDescription;
+    }
+
+    public String getCardYoutRegData() {
+        return cardYoutRegData;
+    }
 }
