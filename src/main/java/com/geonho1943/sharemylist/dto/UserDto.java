@@ -9,14 +9,19 @@ public class UserDto {
     private String userName;
     private LocalDateTime userReg;
     private int userPrivileges;
+    private String userPw;
+
 
     // 기본 생성자 및 모든 필드를 포함하는 생성자
-    public UserDto(Long userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges) {
+    public UserDto() {}
+
+    public UserDto(Long userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges, String userPw) {
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;
         this.userReg = userReg;
         this.userPrivileges = userPrivileges;
+        this.userPw = userPw;
     }
 
     public Long getUserIdx() {
@@ -57,5 +62,13 @@ public class UserDto {
 
     public void setUserPrivileges(int userPrivileges) {
         this.userPrivileges = userPrivileges;
+    }
+
+    public String getUserPw() {
+        return userPw;
+    }
+
+    public void setUserPw(String userPw) {
+        this.userPw = userPw;
     }
 }
