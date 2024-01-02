@@ -1,7 +1,9 @@
 package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.UserDto;
+import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,25 +14,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/userlogin")
     public String userLogin() {
-        // TODO 이미 로그인 정보가 있는지 확인하는 메서드 구현
         return "userInfomation/userLogin";
     }
 
     @PostMapping("/userlogin")
-    public String userlogin(HttpSession httpSession, UserDto loginInfo, Model model){
+    public String userlogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
         try {
-            UserDto loggedInUser = UserService.login(loginInfo);
-            //TODO 세션이 이미 있다면 세션을 갱신
-            httpSession.setAttribute("loggedInUser", loggedInUser);
+            UserDto checkedUserInfo = userService.userLogin(loginInfo);
+            //로그인 정보가 데이터베이스의 유저정보와 일치한다면 유저정보 반환
+            if (httpSession.getAttribute("checkedUserInfo") != null) {
+                //반환된 유저 정보가 기존 세션에 있는지 체크
+                httpSession.invalidate();
+                //중복 로그인 방지를 위한 기존 세션 삭제
+                httpSession= request.getSession();
+                //새로운 세션 생성
+            }
+            httpSession.setAttribute("checkedUserInfo", checkedUserInfo);
+            //세션을 추가, 로그인 성공
             return "redirect:/";
         }catch (Exception e){
             //UserService.login 에서 문제 발생시 예외처리
-            model.addAttribute("loginError", "try again");
-            return "login";
+            model.addAttribute("error", "failedLoginFromUserInfo");
+            return "userInfomation/userLogin";
         }
-
     }
 
 }

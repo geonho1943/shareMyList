@@ -26,6 +26,15 @@ public class User {
     @Column(name = "user_privileges")
     private int userPrivileges;
 
+    public User() {
+    }
+
+    public User(String userId, String userPw) {
+        //로그인 객체를 생성할 생성자
+        this.userId = userId;
+        this.userPw = userPw;
+    }
+
     public Long getUserIdx() {
         return userIdx;
     }

@@ -15,14 +15,15 @@ public class UserDto {
     // 기본 생성자 및 모든 필드를 포함하는 생성자
     public UserDto() {}
 
-    public UserDto(Long userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges, String userPw) {
+    public UserDto(Long userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges) {
+        //로그인을 위한 생성자
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;
         this.userReg = userReg;
         this.userPrivileges = userPrivileges;
-        this.userPw = userPw;
     }
+
 
     public Long getUserIdx() {
         return userIdx;

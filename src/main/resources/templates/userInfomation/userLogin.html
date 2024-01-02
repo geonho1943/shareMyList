@@ -9,11 +9,14 @@
 </head>
 
 <body class="p-3 m-0 border-0 bg-example m-0 border-0 ">
-<nav w3-include-html="navigationbar.html"></nav>
+    <nav w3-include-html="navigationbar.html"></nav>
 
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
+                <div class="modal-body">
+                    <p th:if="${error == 'failedLoginFromUserInfo'}">유저 정보가 올바르지 않습니다.</p>
+                </div>
                 <h2 class="mb-4">로그인</h2>
                 <form method="post" action="/userlogin">
                     <div class="mb-3">

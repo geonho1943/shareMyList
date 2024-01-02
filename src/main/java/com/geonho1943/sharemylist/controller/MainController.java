@@ -1,10 +1,9 @@
 package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.CardDto;
-import com.geonho1943.sharemylist.model.Card;
-import com.geonho1943.sharemylist.model.User;
+import com.geonho1943.sharemylist.dto.UserDto;
 import com.geonho1943.sharemylist.service.CardService;
-import com.geonho1943.sharemylist.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +16,18 @@ import java.util.List;
 
 @Controller
 public class MainController {
-
-    @Autowired
-    private UserService userService;
     @Autowired
     private CardService cardService;
 
     private final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @RequestMapping("/")
-    public String main(Model model){
+    public String main(HttpSession httpSession, Model model){
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+
+        if (loggedInUserInfo != null) {
+            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+        }
         try {
             List<CardDto> pt = cardService.getAllCard();
             Collections.reverse(pt);

@@ -1,4 +1,7 @@
-<nav class="navbar bg-body-tertiary fixed-top">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="navbar bg-body-tertiary fixed-top" >
   <div class="container-fluid">
     <a class="navbar-brand" href="/">
       <div>Share My List</div>
@@ -42,12 +45,11 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
-              <div>My Accounts</div>
+              <div th:if="${loggedInUserInfo == null}">My Accounts</div>
             </a>
-            <a class="nav-link" href="/linkupload">
-              <div>add Potalgate</div>
-            </a>
-            <a class="nav-link" href="/userlogin">Login</a>
+            <a class="nav-link" href="/linkupload" th:if="${loggedInUserInfo != null}">add Potalgate</a>
+            <a class="nav-link" href="/userlogin" th:if="${loggedInUserInfo == null}">Login</a>
+            <p>Welcome, <span th:text="${loggedInUserInfo.userName}"></span>!</p>
           </li>
         </ul>
         <!-- 사이드 바 끝 -->
