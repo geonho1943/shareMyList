@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/userlogin")
     public String userLogin() {
-        return "userInfomation/userLogin";
+        return "userInfomation/userlogin";
     }
 
     @PostMapping("/userlogin")
@@ -40,7 +40,7 @@ public class UserController {
         }catch (Exception e){
             //UserService.login 에서 문제 발생시 예외처리
             model.addAttribute("error", "failedLoginFromUserInfo");
-            return "userInfomation/userLogin";
+            return "userInfomation/userlogin";
         }
     }
 

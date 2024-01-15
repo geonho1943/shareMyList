@@ -22,6 +22,12 @@ public class Playlist {
     @Column(name = "playlist_is_boolean")
     private boolean playlistIsBoolean;
 
+    public Playlist() {}
+
+    public Playlist(int playlistUserIdx) {
+        this.playlistUserIdx = playlistUserIdx;
+    }
+
     public int getPlaylistIdx() {
         return playlistIdx;
     }

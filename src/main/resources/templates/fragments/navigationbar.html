@@ -20,37 +20,26 @@
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <form class="d-flex mt-3" role="search">
-                        <input class="form-control me-2" type="search" placeholder="search playlist or potal"
+                        <input class="form-control me-2" type="search" placeholder="search playlist or card"
                             aria-label="찾다" />
                         <button class="btn btn-outline-success" type="submit">
                             <div></div>search
                         </button>
                     </form>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <div> home </div>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">최신 등록순</a></li>
-                            <li><a class="dropdown-item" href="#">인기 영상순</a></li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">오래된 영상 순 </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <div th:if="${loggedInUserInfo == null}">My Accounts</div>
-                        </a>
 
-                        <p th:if="${loggedInUserInfo != null}">Welcome, <span
-                                th:text="${loggedInUserInfo.userName}"></span>!</p>
-                        <a class="nav-link" href="/linkupload" th:if="${loggedInUserInfo != null}">add Potalgate</a>
-                        <a class="nav-link" href="/userlogin" th:if="${loggedInUserInfo == null}">Login</a>
+                    <li class="nav-item">
+                        <div th:if="${loggedInUserInfo == null}">
+                            <a class="nav-link" href="/userlogin">Login</a>
+                            <a class="nav-link" href="/#">Join</a>
+                        </div>
+                        <div th:if="${loggedInUserInfo != null}">
+                            <a>Welcome <span th:text="${loggedInUserInfo.userName}"></span> !</a>
+                            <a class="nav-link" href="#">My Accounts</a>
+                            <a class="nav-link" href="/linkupload">add Card</a>
+                            <a class="nav-link" href="/setplaylist">set PlayList</a>
+                        </div>
+
+
                     </li>
                 </ul>
                 <!-- 사이드 바 끝 -->

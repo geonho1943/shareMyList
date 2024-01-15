@@ -24,7 +24,6 @@ public class MainController {
     @RequestMapping("/")
     public String main(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
         }
