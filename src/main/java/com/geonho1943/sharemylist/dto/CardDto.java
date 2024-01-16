@@ -2,7 +2,6 @@ package com.geonho1943.sharemylist.dto;
 
 import com.geonho1943.sharemylist.model.Card;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class CardDto {
@@ -14,7 +13,7 @@ public class CardDto {
     private String cardYoutThumNail;
     private String cardYoutChannerName;
     private String cardYoutDescription;
-    private String cardYoutRegData;
+    private LocalDateTime cardYoutRegData;
 
     public CardDto(){}
 
@@ -85,11 +84,11 @@ public class CardDto {
         this.cardYoutDescription = cardYoutDescription;
     }
 
-    public String getCardYoutRegData() {
+    public LocalDateTime getCardYoutRegData() {
         return cardYoutRegData;
     }
 
-    public void setCardYoutRegData(String cardYoutRegData) {
+    public void setCardYoutRegData(LocalDateTime cardYoutRegData) {
         this.cardYoutRegData = cardYoutRegData;
     }
 

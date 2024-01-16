@@ -14,8 +14,8 @@ public class PlaylistService {
     @Autowired
     private PlaylistRepository playlistRepository;
 
-    public List<PlaylistDto> getPlaylistByOneUser(Long playlistUserIdx) {
-        long temp = playlistUserIdx;
+    public List<PlaylistDto> getPlaylistByOneUser(int playlistUserIdx) {
+        int temp = playlistUserIdx;
         List<Playlist> allPlaylistEntityByOneUser = playlistRepository.findByPlaylistUserIdx(temp);
 
         List<PlaylistDto> allPlaylistDtoByOneUser = new ArrayList<>();
@@ -23,5 +23,16 @@ public class PlaylistService {
             allPlaylistDtoByOneUser.add(new PlaylistDto(playlist));
         }
         return allPlaylistDtoByOneUser;
+    }
+
+
+    public void createPlaylist(int userIdx, String playlistName) {
+        Playlist playlist = new Playlist(userIdx, playlistName);
+        try {
+            playlistRepository.save(playlist);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 }

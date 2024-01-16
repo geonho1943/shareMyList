@@ -28,6 +28,11 @@ public class Playlist {
         this.playlistUserIdx = playlistUserIdx;
     }
 
+    public Playlist(int playlistUserIdx, String playlistName) {
+        this.playlistUserIdx = playlistUserIdx;
+        this.playlistName = playlistName;
+    }
+
     public int getPlaylistIdx() {
         return playlistIdx;
     }

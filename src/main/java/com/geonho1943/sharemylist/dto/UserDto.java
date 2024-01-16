@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class UserDto {
 
-    private Long userIdx;
+    private int userIdx;
     private String userId;
     private String userName;
     private LocalDateTime userReg;
@@ -15,7 +15,7 @@ public class UserDto {
     // 기본 생성자 및 모든 필드를 포함하는 생성자
     public UserDto() {}
 
-    public UserDto(Long userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges) {
+    public UserDto(int userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges) {
         //로그인을 위한 생성자
         this.userIdx = userIdx;
         this.userId = userId;
@@ -25,11 +25,11 @@ public class UserDto {
     }
 
 
-    public Long getUserIdx() {
+    public int getUserIdx() {
         return userIdx;
     }
 
-    public void setUserIdx(Long userIdx) {
+    public void setUserIdx(int userIdx) {
         this.userIdx = userIdx;
     }
 

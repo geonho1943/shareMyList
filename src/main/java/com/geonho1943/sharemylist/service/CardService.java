@@ -15,9 +15,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CardService {
@@ -58,7 +59,7 @@ public class CardService {
             String apiUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + videoId +
                     "&key=" + apiKey +
                     "&part=snippet" +
-                    "&fields=items(snippet(title,thumbnails,channelTitle))";
+                    "&fields=items(snippet(title,thumbnails,channelTitle,publishedAt))";
 
             // HTTP 클라이언트 생성
             HttpClient client = HttpClient.newHttpClient();
@@ -85,7 +86,7 @@ public class CardService {
                 // 필요한 데이터 추출
                 String title = snippet.getAsJsonPrimitive("title").getAsString();
                 String channelTitle = snippet.getAsJsonPrimitive("channelTitle").getAsString();
-
+                String publishedAt = snippet.getAsJsonPrimitive("publishedAt").getAsString();
                 JsonObject thumbnails = snippet.getAsJsonObject("thumbnails");
                 // 여기서 필요한 썸네일 크기 선택
                 String thumbnailUrl = thumbnails.getAsJsonObject("medium").getAsJsonPrimitive("url").getAsString();
@@ -94,19 +95,12 @@ public class CardService {
                 videoMetaData = new CardDto();
 
                 videoMetaData.setCardYoutId(videoId);
-
-                System.out.println(videoMetaData.getCardYoutId()+" #");
                 videoMetaData.setCardPlaylistIdx(3);
-
                 videoMetaData.setCardYoutTitle(title);
-                System.out.println(videoMetaData.getCardYoutTitle()+" #");
-
                 videoMetaData.setCardYoutChannerName(channelTitle);
-                System.out.println(videoMetaData.getCardYoutChannerName()+" #");
-
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                videoMetaData.setCardYoutRegData(LocalDateTime.parse(publishedAt, formatter));
                 videoMetaData.setCardYoutThumNail(thumbnailUrl);
-                System.out.println(videoMetaData.getCardYoutThumNail()+" #");
-
             }
         } catch (Exception e) {
             e.printStackTrace();

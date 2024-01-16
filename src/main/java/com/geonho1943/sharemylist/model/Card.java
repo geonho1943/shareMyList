@@ -3,6 +3,8 @@ package com.geonho1943.sharemylist.model;
 import com.geonho1943.sharemylist.dto.CardDto;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "card")
 public class Card {
@@ -30,7 +32,7 @@ private String cardYoutChannerName;
 private String cardYoutDescription;
 
 @Column(name = "card_yout_reg_data")
-private String cardYoutRegData;
+private LocalDateTime cardYoutRegData;
 
     public Card() {
     }
@@ -74,7 +76,7 @@ private String cardYoutRegData;
         return cardYoutDescription;
     }
 
-    public String getCardYoutRegData() {
+    public LocalDateTime getCardYoutRegData() {
         return cardYoutRegData;
     }
 }

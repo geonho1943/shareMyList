@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-public class CardController {
+public class PlaylistController {
 
-    private final Logger logger = LoggerFactory.getLogger(CardController.class);
+    private final Logger logger = LoggerFactory.getLogger(PlaylistController.class);
     @Autowired
     private CardService cardService;
 
@@ -38,15 +38,19 @@ public class CardController {
         }
     }
 
-    @GetMapping("/setplaylist")
+    @GetMapping("/playlist")
     public String playlistUpload(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
-            List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            model.addAttribute("playlistByUser", userPlayList);
+            List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
             //유저의 playlist 목록 조회
-            return "playlistImfomation/setplaylist";
+            if (userPlayList.size() != 0){
+                model.addAttribute("playlistByUser", userPlayList);
+            }else {
+                model.addAttribute("error", "emptyPlailist");
+            }
+            return "playlistImfomation/playlist";
         }else {
             model.addAttribute("error", "emptyUserInfo");
             return "userInfomation/userlogin";
@@ -63,7 +67,7 @@ public class CardController {
         //  DB에 저장 (jpa)
         return "redirect:/";
     }
-    @GetMapping("createplaylist")
+    @GetMapping("/createplaylist")
     public String createPlayList(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
@@ -73,6 +77,24 @@ public class CardController {
             model.addAttribute("error", "emptyUserInfo");
             return "userInfomation/userlogin";
         }
+    }
+
+    @PostMapping("/createplaylist")
+    public String createPlaylist(HttpSession httpSession, Model model, String playlistName){
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        //유저정보 확인
+        if (loggedInUserInfo != null) {
+            try {
+                playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
+            }catch (Exception e){
+                System.out.println(e);
+            }
+            return "redirect:/playlist";
+        }else {
+            model.addAttribute("error", "emptyUserInfo");
+            return "userInfomation/userlogin";
+        }
+
     }
 
 

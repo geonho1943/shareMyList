@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping("/userlogin")
-    public String userlogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
+    public String userLogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
         try {
             UserDto checkedUserInfo = userService.userLogin(loginInfo);
             //로그인 정보가 데이터베이스의 유저정보와 일치한다면 유저정보 반환
@@ -42,6 +42,12 @@ public class UserController {
             model.addAttribute("error", "failedLoginFromUserInfo");
             return "userInfomation/userlogin";
         }
+    }
+
+    @GetMapping("/logout")
+    public String userLogout(HttpSession httpSession){
+        httpSession.invalidate();
+        return "redirect:/";
     }
 
 }

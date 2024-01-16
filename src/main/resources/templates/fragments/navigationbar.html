@@ -35,11 +35,10 @@
                         <div th:if="${loggedInUserInfo != null}">
                             <a>Welcome <span th:text="${loggedInUserInfo.userName}"></span> !</a>
                             <a class="nav-link" href="#">My Accounts</a>
+                            <a class="nav-link" href="/playlist">My PlayList</a>
                             <a class="nav-link" href="/linkupload">add Card</a>
-                            <a class="nav-link" href="/setplaylist">set PlayList</a>
+                            <a class="nav-link" href="/logout">Logout</a>
                         </div>
-
-
                     </li>
                 </ul>
                 <!-- 사이드 바 끝 -->
