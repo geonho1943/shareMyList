@@ -59,7 +59,7 @@ public class CardService {
             String apiUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + videoId +
                     "&key=" + apiKey +
                     "&part=snippet" +
-                    "&fields=items(snippet(title,thumbnails,channelTitle,publishedAt))";
+                    "&fields=items(snippet(title,channelTitle,publishedAt,thumbnails))";
 
             // HTTP 클라이언트 생성
             HttpClient client = HttpClient.newHttpClient();
@@ -93,7 +93,6 @@ public class CardService {
 
                 // CardDto 객체 생성
                 videoMetaData = new CardDto();
-
                 videoMetaData.setCardYoutId(videoId);
                 videoMetaData.setCardPlaylistIdx(3);
                 videoMetaData.setCardYoutTitle(title);
@@ -120,4 +119,8 @@ public class CardService {
 
     }
 
+    public CardDto getCardInfo(int cardIdx) {
+        //idx와 일치하는 card 정보를 반환
+        return new CardDto(cardRepository.getAllByCardIdx(cardIdx));
+    }
 }

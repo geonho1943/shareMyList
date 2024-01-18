@@ -31,10 +31,10 @@ public class PlaylistController {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            return "playlistImfomation/linkupload";
+            return "playlist/linkupload";
         }else {
             model.addAttribute("error", "emptyUserInfo");
-            return "userInfomation/userlogin";
+            return "user/userlogin";
         }
     }
 
@@ -50,10 +50,10 @@ public class PlaylistController {
             }else {
                 model.addAttribute("error", "emptyPlailist");
             }
-            return "playlistImfomation/playlist";
+            return "playlist/playlist";
         }else {
             model.addAttribute("error", "emptyUserInfo");
-            return "userInfomation/userlogin";
+            return "user/userlogin";
         }
     }
 
@@ -72,10 +72,10 @@ public class PlaylistController {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            return "playlistImfomation/createplaylist";
+            return "playlist/createplaylist";
         }else {
             model.addAttribute("error", "emptyUserInfo");
-            return "userInfomation/userlogin";
+            return "user/userlogin";
         }
     }
 
@@ -92,10 +92,23 @@ public class PlaylistController {
             return "redirect:/playlist";
         }else {
             model.addAttribute("error", "emptyUserInfo");
-            return "userInfomation/userlogin";
+            return "user/userlogin";
         }
 
     }
 
+    @GetMapping("/cardInfo/{cardIdx}")
+    public String asd (@PathVariable int cardIdx, HttpSession httpSession, Model model){
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        if (loggedInUserInfo != null) {
+            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+            CardDto cardInfo = cardService.getCardInfo(cardIdx);
+            model.addAttribute("cardInfo", cardInfo);
+            return "card/cardinfo";
+        }else {
+            model.addAttribute("error", "emptyUserInfo");
+            return "user/userlogin";
+        }
+    }
 
 }

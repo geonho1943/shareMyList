@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>SML - Card Information</title>
+</head>
+
+<body class="p-3 m-0 border-0 bg-example m-0 border-0 ">
+<nav th:replace="~{fragments/navigationbar :: navigationbar}"></nav>
+<div class="container mt-5 pt-5">
+  <div class="card">
+    <a th:href="@{'https://www.youtube.com/watch?v=' + ${cardInfo.cardYoutId}}">
+      <img th:src="${cardInfo.cardYoutThumNail}" class="card-img" alt="youtube thumnail">
+    </a>
+    <div class="card-body">
+      <h5 th:text="${cardInfo.cardYoutTitle}" class="card-subtitle mb-2 text-muted"></h5>
+      <p th:text="${cardInfo.cardYoutChannerName}"></p>
+      <p th:text="${cardInfo.cardYoutDescription}"></p>
+      <p th:text="${cardInfo.cardYoutRegData}" class="card-text"></p>
+<!--      미사용된 데이터-->
+<!--      <a th:text="${cardInfo.cardIdx}">cardIdx</a>-->
+<!--      <a th:text="${cardInfo.cardPlaylistIdx}">cardPlaylistIdx</a>-->
+
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

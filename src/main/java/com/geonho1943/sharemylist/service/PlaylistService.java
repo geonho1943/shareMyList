@@ -25,7 +25,6 @@ public class PlaylistService {
         return allPlaylistDtoByOneUser;
     }
 
-
     public void createPlaylist(int userIdx, String playlistName) {
         Playlist playlist = new Playlist(userIdx, playlistName);
         try {
@@ -35,4 +34,6 @@ public class PlaylistService {
         }
 
     }
+
+
 }

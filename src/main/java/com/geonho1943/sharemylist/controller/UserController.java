@@ -1,7 +1,6 @@
 package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.UserDto;
-import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -19,7 +18,7 @@ public class UserController {
 
     @GetMapping("/userlogin")
     public String userLogin() {
-        return "userInfomation/userlogin";
+        return "user/userlogin";
     }
 
     @PostMapping("/userlogin")
@@ -40,7 +39,7 @@ public class UserController {
         }catch (Exception e){
             //UserService.login 에서 문제 발생시 예외처리
             model.addAttribute("error", "failedLoginFromUserInfo");
-            return "userInfomation/userlogin";
+            return "user/userlogin";
         }
     }
 
