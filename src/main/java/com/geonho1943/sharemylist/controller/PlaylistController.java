@@ -111,4 +111,23 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/playlistInfo/{playlistIdx}")
+    public String playlistInfo (@PathVariable int playlistIdx, HttpSession httpSession, Model model){
+        //playlist의 card 조회
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        if (loggedInUserInfo != null) {
+            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+        }else {
+            model.addAttribute("error", "emptyUserInfo");
+            return "user/userlogin";
+        }
+        List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
+        if (cardInfoList.size() != 0){
+            model.addAttribute("cardInfoList",cardInfoList);
+        }else {
+            model.addAttribute("emptyData","emptyCardInfo");
+        }
+        return "playlist/playlistinfo";
+
+    }
 }

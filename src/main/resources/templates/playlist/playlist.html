@@ -9,15 +9,14 @@
 
 <body class="p-3 m-0 border-0 bg-example m-0 border-0 ">
   <nav th:replace="~{fragments/navigationbar :: navigationbar}"></nav>
-<div class="container mt-5">
-  <div class="modal-body">
+  <div class="container mt-5 pt-5">
+  <div class="modal-body pb-3">
     <p th:if="${error == 'emptyPlailist'}">플레이 리스트가 없습니다 플레이리스트를 만들어주세요.</p>
-  </div>
-  <div class="mb-2">
-    <button type="button" class="btn btn-primary" onclick="location.href='/createplaylist'">새로운 리스트 생성</button>
+    <a class="btn btn-primary" href="/createplaylist" role="button">새로운 리스트 생성</a>
   </div>
   <div class="list-group">
-    <a th:each="playlist : ${playlistByUser}" href="#" class="list-group-item list-group-item-action">
+
+    <a th:each="playlist : ${playlistByUser}" th:href="@{/playlistInfo/{id}(id=${playlist.playlistIdx})}" class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1" th:text="${playlist.playlistName}">Playlist name</h5>
       </div>

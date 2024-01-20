@@ -59,7 +59,7 @@ public class CardService {
             String apiUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + videoId +
                     "&key=" + apiKey +
                     "&part=snippet" +
-                    "&fields=items(snippet(title,channelTitle,publishedAt,thumbnails))";
+                    "&fields=items(snippet(title,channelTitle,publishedAt,thumbnails,description))";
 
             // HTTP 클라이언트 생성
             HttpClient client = HttpClient.newHttpClient();
@@ -87,6 +87,7 @@ public class CardService {
                 String title = snippet.getAsJsonPrimitive("title").getAsString();
                 String channelTitle = snippet.getAsJsonPrimitive("channelTitle").getAsString();
                 String publishedAt = snippet.getAsJsonPrimitive("publishedAt").getAsString();
+                String description = snippet.getAsJsonPrimitive("description").getAsString();
                 JsonObject thumbnails = snippet.getAsJsonObject("thumbnails");
                 // 여기서 필요한 썸네일 크기 선택
                 String thumbnailUrl = thumbnails.getAsJsonObject("medium").getAsJsonPrimitive("url").getAsString();
@@ -97,6 +98,7 @@ public class CardService {
                 videoMetaData.setCardPlaylistIdx(3);
                 videoMetaData.setCardYoutTitle(title);
                 videoMetaData.setCardYoutChannerName(channelTitle);
+                videoMetaData.setCardYoutDescription(description);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
                 videoMetaData.setCardYoutRegData(LocalDateTime.parse(publishedAt, formatter));
                 videoMetaData.setCardYoutThumNail(thumbnailUrl);
@@ -122,5 +124,15 @@ public class CardService {
     public CardDto getCardInfo(int cardIdx) {
         //idx와 일치하는 card 정보를 반환
         return new CardDto(cardRepository.getAllByCardIdx(cardIdx));
+    }
+
+    public List<CardDto> getCardListByPlaylist(int playlistIdx) {
+//        cardPlaylistIdx가 일치하는 필드를 list로 반환
+        List<Card> cardInfoListEntity = cardRepository.getAllByCardPlaylistIdx(playlistIdx);
+        List<CardDto> cardInfoList = new ArrayList<>();
+        for (Card card : cardInfoListEntity) {
+            cardInfoList.add(new CardDto(card));
+        }
+        return cardInfoList;
     }
 }
