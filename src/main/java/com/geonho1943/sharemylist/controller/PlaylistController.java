@@ -28,9 +28,17 @@ public class PlaylistController {
 
     @GetMapping("/linkupload")
     public String linkUpload(HttpSession httpSession, Model model) {
+
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+            List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+            //유저의 playlist 목록 조회
+            if (userPlayList.size() != 0){
+                model.addAttribute("playlistByUser", userPlayList);
+            }else {
+                model.addAttribute("error", "emptyPlaylist");
+            }
             return "playlist/linkupload";
         }else {
             model.addAttribute("error", "emptyUserInfo");
@@ -48,7 +56,7 @@ public class PlaylistController {
             if (userPlayList.size() != 0){
                 model.addAttribute("playlistByUser", userPlayList);
             }else {
-                model.addAttribute("error", "emptyPlailist");
+                model.addAttribute("error", "emptyPlaylist");
             }
             return "playlist/playlist";
         }else {
@@ -58,11 +66,13 @@ public class PlaylistController {
     }
 
     @PostMapping("/submitYoutubeLink")
-    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink) {
+    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx) {
         String videoId = cardService.youtubeLinkParser(youtubeLink);
         // URL 파싱
         CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
         // youtube data api 요청 > json 값을 파싱해서 card 객체 생성
+        videoMetaData.setCardPlaylistIdx(playlistIdx);
+//        유저가 선택한 playlistIdx 추가
         cardService.saveVideoMetaData(videoMetaData);
         //  DB에 저장 (jpa)
         return "redirect:/";
@@ -129,5 +139,31 @@ public class PlaylistController {
         }
         return "playlist/playlistinfo";
 
+    }
+
+
+    @RequestMapping("/deleteCard/{cardPlaylistIdx}/{cardIdx}")
+    public String deleteCard(@PathVariable int cardPlaylistIdx, @PathVariable int cardIdx, HttpSession httpSession, Model model){
+        //카드삭제 과정: 검증데이터 조회 > 검증 > 삭제
+        //검증 데이터 조회
+        //cardPlaylistIdx가 playlist테이블의 playlist_idx와 일치하는 필드의 playlist_useridx 조회
+        //본인 검증
+        //playlist_useridx가 세션의 loggedInUserInfo.userIdx 와 일치한다면 해당 유저가 생성했던 card 임을 검증하게 됨
+        //카드 삭제
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        if (loggedInUserInfo != null) {
+            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+        }else {
+            model.addAttribute("error", "emptyUserInfo");
+            return "user/userlogin";
+        }
+        int verifeduserIdx = playlistService.verifyposs(cardPlaylistIdx);
+        if (verifeduserIdx == loggedInUserInfo.getUserIdx()){
+            cardService.deleteCard(cardIdx);
+        }else {
+            model.addAttribute("error", "failedDeleteByIncorInfo");
+            return "playlist/playlistinfo";
+        }
+        return "redirect:/";
     }
 }

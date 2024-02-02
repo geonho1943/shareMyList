@@ -35,5 +35,13 @@ public class PlaylistService {
 
     }
 
-
+    public int verifyposs(int cardPlaylistIdx) {
+        Playlist temp = null;
+        try {
+            temp = playlistRepository.findPlaylistUseridxByPlaylistIdx(cardPlaylistIdx);
+        } catch (NullPointerException e) {
+            System.out.println(e);
+        }
+        return temp.getPlaylistUserIdx();
+    }
 }
