@@ -20,7 +20,7 @@ public class Playlist {
     private String playlistName;
 
     @Column(name = "playlist_is_boolean")
-    private boolean playlistIsBoolean;
+    private Boolean playlistIsBoolean;
 
     public Playlist() {}
 
@@ -45,7 +45,7 @@ public class Playlist {
         return playlistName;
     }
 
-    public boolean isPlaylistIsBoolean() {
+    public Boolean getPlaylistIsBoolean() {
         return playlistIsBoolean;
     }
 }

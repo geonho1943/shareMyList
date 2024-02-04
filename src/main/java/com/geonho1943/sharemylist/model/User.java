@@ -26,8 +26,10 @@ public class User {
     @Column(name = "user_privileges")
     private int userPrivileges;
 
-    public User() {
-    }
+    @Column(name = "user_status")
+    private boolean userStatus;
+
+    public User() {}
 
     public User(String userId, String userPw) {
         //로그인 객체를 생성할 생성자
@@ -57,5 +59,13 @@ public class User {
 
     public int getUserPrivileges() {
         return userPrivileges;
+    }
+
+    public boolean isUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(boolean userStatus) {
+        this.userStatus = userStatus;
     }
 }

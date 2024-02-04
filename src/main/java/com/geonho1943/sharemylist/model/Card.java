@@ -34,8 +34,7 @@ private String cardYoutDescription;
 @Column(name = "card_yout_reg_data")
 private LocalDateTime cardYoutRegData;
 
-    public Card() {
-    }
+    public Card() {}
 
     public Card(CardDto cardDto) {
         this.cardIdx = cardDto.getCardIdx();

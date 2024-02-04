@@ -10,6 +10,7 @@ public class UserDto {
     private LocalDateTime userReg;
     private int userPrivileges;
     private String userPw;
+    private boolean userStatus;
 
 
     // 기본 생성자 및 모든 필드를 포함하는 생성자
@@ -71,5 +72,13 @@ public class UserDto {
 
     public void setUserPw(String userPw) {
         this.userPw = userPw;
+    }
+
+    public boolean isUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(boolean userStatus) {
+        this.userStatus = userStatus;
     }
 }

@@ -37,7 +37,7 @@ public class UserController {
             //세션을 추가, 로그인 성공
             return "redirect:/";
         }catch (Exception e){
-            //UserService.login 에서 문제 발생시 예외처리
+            //userService.login 에서 문제 발생시 예외처리
             model.addAttribute("error", "failedLoginFromUserInfo");
             return "user/userlogin";
         }
@@ -47,6 +47,26 @@ public class UserController {
     public String userLogout(HttpSession httpSession){
         httpSession.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/resign")
+    public String userResign(HttpSession httpSession){
+        return "user/userresign";
+    }
+
+    @PostMapping("/resign")
+    public String userResign(HttpSession httpSession, Model model, UserDto resignInfo){
+        try {
+            userService.resgin(resignInfo);
+            httpSession.invalidate();
+            model.addAttribute("success", "userResignSuccess");
+            return "user/userlogin";
+        }catch (Exception e){
+            //userService.resgin 에서 문제 발생시 예외처리
+            model.addAttribute("error", "failedResginFromUserInfo");
+            return "user/userlogin";
+        }
+
     }
 
 }
