@@ -45,4 +45,32 @@ public class UserService {
         }
 
     }
+
+    public void saveAccount(UserDto joinInfo) {
+        //회원 가입
+        User joinInfoEntity = new User(joinInfo.getUserId(), joinInfo.getUserPw(),joinInfo.getUserName());
+        joinInfoEntity.setUserStatus(true);
+        joinInfoEntity.setUserPrivileges(1);
+
+        userRepository.save(joinInfoEntity);
+    }
+
+    public boolean checkAccount(UserDto joinInfo) {
+        //id check
+        if (joinInfo.getUserId().length() < 8 ) {
+            return false;
+        }
+        if (!joinInfo.getUserId().matches("[a-zA-Z0-9]+")) {
+            return false;
+        }
+
+        // pw check
+        if (joinInfo.getUserPw().length() < 8) {
+            return false;
+        }
+        if (!joinInfo.getUserPw().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$")) {
+            return false;
+        }
+        return true;
+    }
 }

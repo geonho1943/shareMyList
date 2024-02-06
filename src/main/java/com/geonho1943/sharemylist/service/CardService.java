@@ -41,7 +41,6 @@ public class CardService {
     public String youtubeLinkParser(String youtubeLink) {
         String videoId = null;
 
-        //TODO 정규식으로 전환 하는것이 더 좋을듯하다.
         if (youtubeLink.startsWith("https://youtu.be/")) {
             // YouTube 단축 URL 형태 https://youtu.be/
             videoId = youtubeLink.substring("https://youtu.be/".length(), "https://youtu.be/".length() + 11);
@@ -134,5 +133,10 @@ public class CardService {
             cardInfoList.add(new CardDto(card));
         }
         return cardInfoList;
+    }
+
+    public void deleteCard(int cardIdx) {
+        cardRepository.deleteById((long) cardIdx);
+
     }
 }

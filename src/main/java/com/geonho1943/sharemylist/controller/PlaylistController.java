@@ -108,7 +108,7 @@ public class PlaylistController {
     }
 
     @GetMapping("/cardInfo/{cardIdx}")
-    public String asd (@PathVariable int cardIdx, HttpSession httpSession, Model model){
+    public String cardInfo (@PathVariable int cardIdx, HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);

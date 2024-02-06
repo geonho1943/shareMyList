@@ -16,12 +16,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/userlogin")
+    @GetMapping("/login")
     public String userLogin() {
         return "user/userlogin";
     }
 
-    @PostMapping("/userlogin")
+    @PostMapping("/login")
     public String userLogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
         try {
             UserDto checkedUserInfo = userService.userLogin(loginInfo);
@@ -65,6 +65,27 @@ public class UserController {
             //userService.resgin 에서 문제 발생시 예외처리
             model.addAttribute("error", "failedResginFromUserInfo");
             return "user/userlogin";
+        }
+
+    }
+
+    @GetMapping("/join")
+    public String userJoin(){
+        return "user/userJoin";
+    }
+
+    @PostMapping("join")
+    public String userJoin(UserDto joinInfo, Model model){
+        if (userService.checkAccount(joinInfo)){
+            //계정 양식 체크(id,pw,name)
+            userService.saveAccount(joinInfo);
+            //계정 추가
+            model.addAttribute("success", "userJoinSuccess");
+            return "user/userlogin";
+        }else{
+            model.addAttribute("error", "joinfailByJoinform");
+            //로그인 양식에 적합하지않는 계정정보
+            return "user/userJoin";
         }
 
     }

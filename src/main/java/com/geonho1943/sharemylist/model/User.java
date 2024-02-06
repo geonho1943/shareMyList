@@ -37,6 +37,13 @@ public class User {
         this.userPw = userPw;
     }
 
+    public User(String userId, String userPw, String userName) {
+        //회원가입 객체를 생성할 생성자
+        this.userId = userId;
+        this.userPw = userPw;
+        this.userName = userName;
+    }
+
     public int getUserIdx() {
         return userIdx;
     }
@@ -67,5 +74,9 @@ public class User {
 
     public void setUserStatus(boolean userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public void setUserPrivileges(int userPrivileges) {
+        this.userPrivileges = userPrivileges;
     }
 }
