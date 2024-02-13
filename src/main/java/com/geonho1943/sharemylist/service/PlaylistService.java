@@ -44,4 +44,8 @@ public class PlaylistService {
         }
         return temp.getPlaylistUserIdx();
     }
+
+    public void deletePlaylist(int playlistIdx) {
+        playlistRepository.deleteByPlaylistIdx(playlistIdx);
+    }
 }

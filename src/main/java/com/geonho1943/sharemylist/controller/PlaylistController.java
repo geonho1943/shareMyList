@@ -72,7 +72,7 @@ public class PlaylistController {
         CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
         // youtube data api 요청 > json 값을 파싱해서 card 객체 생성
         videoMetaData.setCardPlaylistIdx(playlistIdx);
-//        유저가 선택한 playlistIdx 추가
+        //유저가 선택한 playlistIdx 추가
         cardService.saveVideoMetaData(videoMetaData);
         //  DB에 저장 (jpa)
         return "redirect:/";
@@ -166,4 +166,13 @@ public class PlaylistController {
         }
         return "redirect:/";
     }
+
+
+    @RequestMapping("/deletePlaylist/{playlistIdx}")
+    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession){
+        playlistService.deletePlaylist(playlistIdx);
+
+        return "redirect:/playlist";
+    }
+
 }
