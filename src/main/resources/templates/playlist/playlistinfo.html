@@ -34,7 +34,7 @@
               <p th:text="${card.cardYoutRegData}" class="card-text">publishedAt</p>
               <a th:href="@{'/cardInfo/' + ${card.cardIdx}}">자세히 보기</a>
               <a class="btn btn-primary" th:href="@{'/deleteCard/' + ${card.cardPlaylistIdx} + '/' + ${card.cardIdx}}"
-                 role="button">삭제</a>
+                 role="button">Delete</a>
             </div>
           </div>
         </div>

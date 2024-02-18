@@ -97,7 +97,7 @@ public class PlaylistController {
             try {
                 playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
             }catch (Exception e){
-                System.out.println(e);
+                throw e;
             }
             return "redirect:/playlist";
         }else {
@@ -169,9 +169,10 @@ public class PlaylistController {
 
 
     @RequestMapping("/deletePlaylist/{playlistIdx}")
-    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession){
-        playlistService.deletePlaylist(playlistIdx);
-
+    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession) throws Exception {
+        //플레이리스트삭제
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
         return "redirect:/playlist";
     }
 

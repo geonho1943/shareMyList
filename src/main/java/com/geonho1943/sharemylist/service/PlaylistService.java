@@ -2,9 +2,11 @@ package com.geonho1943.sharemylist.service;
 
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.model.Playlist;
+import com.geonho1943.sharemylist.repository.CardRepository;
 import com.geonho1943.sharemylist.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.List;
 public class PlaylistService {
     @Autowired
     private PlaylistRepository playlistRepository;
+
+    @Autowired
+    private CardRepository cardRepository;
 
     public List<PlaylistDto> getPlaylistByOneUser(int playlistUserIdx) {
         int temp = playlistUserIdx;
@@ -45,7 +50,19 @@ public class PlaylistService {
         return temp.getPlaylistUserIdx();
     }
 
-    public void deletePlaylist(int playlistIdx) {
-        playlistRepository.deleteByPlaylistIdx(playlistIdx);
+    @Transactional
+    public void deletePlaylist(int playlistIdx, int userIdx) throws Exception {
+        //플레이리스트 삭제
+        Playlist playlistCreatedByUser = playlistRepository.findPlaylistUseridxByPlaylistIdx(playlistIdx);
+        if (playlistCreatedByUser.getPlaylistUserIdx() == userIdx){
+            playlistRepository.deleteByPlaylistIdx(playlistIdx);
+            //플레이리스트삭제
+            cardRepository.deleteAllByCardPlaylistIdx(playlistIdx);
+            //해당 플레이리스트의 카드 일괄 삭제
+        }else {
+            //유저 본인의 생성물이 아닐경우
+            throw new Exception("타인의 리스트를 변경할수 없습니다");
+        }
+
     }
 }

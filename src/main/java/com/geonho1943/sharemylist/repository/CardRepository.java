@@ -13,4 +13,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     Card getAllByCardIdx(int cardIdx);
 
     List<Card> getAllByCardPlaylistIdx(int playlistIdx);
+
+    void deleteAllByCardPlaylistIdx(int playlistIdx);
 }
