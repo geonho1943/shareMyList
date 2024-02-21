@@ -11,18 +11,19 @@ public class UserDto {
     private int userPrivileges;
     private String userPw;
     private boolean userStatus;
-
+    private String userSalt;
 
     // 기본 생성자 및 모든 필드를 포함하는 생성자
     public UserDto() {}
 
-    public UserDto(int userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges) {
+    public UserDto(int userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges, String userSalt) {
         //로그인을 위한 생성자
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;
         this.userReg = userReg;
         this.userPrivileges = userPrivileges;
+        this.userSalt = userSalt;
     }
 
 
@@ -81,4 +82,5 @@ public class UserDto {
     public void setUserStatus(boolean userStatus) {
         this.userStatus = userStatus;
     }
+
 }

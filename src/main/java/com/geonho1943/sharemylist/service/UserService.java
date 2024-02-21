@@ -48,11 +48,40 @@ public class UserService {
 
     public void saveAccount(UserDto joinInfo) {
         //회원 가입
-        User joinInfoEntity = new User(joinInfo.getUserId(), joinInfo.getUserPw(),joinInfo.getUserName());
+        String salt = generateSalt();
+        //salt 생성
+        String hashedPassword = hashPassword(joinInfo.getUserPw(), salt);
+        //비밀번호 해싱
+
+        // 회원 가입
+        User joinInfoEntity = new User(joinInfo.getUserId(), hashedPassword, joinInfo.getUserName());
         joinInfoEntity.setUserStatus(true);
         joinInfoEntity.setUserPrivileges(1);
+        joinInfoEntity.setUserSalt(salt);
 
         userRepository.save(joinInfoEntity);
+    }
+
+    private String generateSalt() {
+        //salt 생성
+        SecureRandom random = new SecureRandom();
+        byte[] salt1 = new byte[16];
+        random.nextBytes(salt1);
+        return Base64.getEncoder().encodeToString(salt1);
+    }
+
+    private String hashPassword(String password, String salt) {
+        //해싱
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.reset();
+            digest.update(Base64.getDecoder().decode(salt));
+            byte[] hashedBytes = digest.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean checkAccount(UserDto joinInfo) {

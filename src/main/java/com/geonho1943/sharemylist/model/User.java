@@ -29,6 +29,9 @@ public class User {
     @Column(name = "user_status")
     private boolean userStatus;
 
+    @Column(name = "user_salt")
+    private String userSalt;
+
     public User() {}
 
     public User(String userId, String userPw) {
@@ -78,5 +81,17 @@ public class User {
 
     public void setUserPrivileges(int userPrivileges) {
         this.userPrivileges = userPrivileges;
+    }
+
+    public void setUserPw(String userPw) {
+        this.userPw = userPw;
+    }
+
+    public String getUserSalt() {
+        return userSalt;
+    }
+
+    public void setUserSalt(String userSalt) {
+        this.userSalt = userSalt;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -34,6 +35,7 @@ public class PlaylistController {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
             List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
             //유저의 playlist 목록 조회
+            Collections.reverse(userPlayList);
             if (userPlayList.size() != 0){
                 model.addAttribute("playlistByUser", userPlayList);
             }else {
@@ -53,6 +55,7 @@ public class PlaylistController {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
             List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
             //유저의 playlist 목록 조회
+            Collections.reverse(userPlayList);
             if (userPlayList.size() != 0){
                 model.addAttribute("playlistByUser", userPlayList);
             }else {
@@ -77,6 +80,7 @@ public class PlaylistController {
         //  DB에 저장 (jpa)
         return "redirect:/";
     }
+
     @GetMapping("/createplaylist")
     public String createPlayList(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
@@ -132,6 +136,7 @@ public class PlaylistController {
             return "user/userlogin";
         }
         List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
+        Collections.reverse(cardInfoList);
         if (cardInfoList.size() != 0){
             model.addAttribute("cardInfoList",cardInfoList);
         }else {
