@@ -14,6 +14,7 @@ public class CardDto {
     private String cardYoutChannerName;
     private String cardYoutDescription;
     private LocalDateTime cardYoutRegData;
+    private boolean cardStatus;
 
     public CardDto(){}
 
@@ -92,4 +93,11 @@ public class CardDto {
         this.cardYoutRegData = cardYoutRegData;
     }
 
+    public boolean isCardStatus() {
+        return cardStatus;
+    }
+
+    public void setCardStatus(boolean cardStatus) {
+        this.cardStatus = cardStatus;
+    }
 }

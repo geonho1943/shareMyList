@@ -76,18 +76,18 @@ public class UserController {
 
     @PostMapping("join")
     public String userJoin(UserDto joinInfo, Model model){
-        if (userService.checkAccount(joinInfo)){
-            //계정 양식 체크(id,pw,name)
-            userService.saveAccount(joinInfo);
-            //계정 추가
-            model.addAttribute("success", "userJoinSuccess");
-            return "user/userlogin";
-        }else{
-            model.addAttribute("error", "joinfailByJoinform");
-            //로그인 양식에 적합하지않는 계정정보
+        String errorReason = userService.checkAccount(joinInfo);
+        if (errorReason != null) {
+            model.addAttribute("error", errorReason);
             return "user/userJoin";
         }
-
+        if (userService.isDuplicateId(joinInfo.getUserId())) {
+            model.addAttribute("error", "다른 id를 사용헤주세요.");
+            return "user/userJoin";
+        }
+        userService.saveAccount(joinInfo);
+        model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
+        return "user/userlogin";
     }
 
 }

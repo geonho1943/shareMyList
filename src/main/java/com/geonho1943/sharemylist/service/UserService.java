@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -102,22 +103,28 @@ public class UserService {
         }
     }
 
-    public boolean checkAccount(UserDto joinInfo) {
-        //id check
+    public String checkAccount(UserDto joinInfo) {
+        // id check
         if (joinInfo.getUserId().length() < 8 ) {
-            return false;
+            return "ID는 8자 이상이어야 합니다.";
         }
         if (!joinInfo.getUserId().matches("[a-zA-Z0-9]+")) {
-            return false;
+            return "ID는 알파벳 대소문자와 숫자만 포함해야 합니다.";
         }
 
         // pw check
         if (joinInfo.getUserPw().length() < 8) {
-            return false;
+            return "비밀번호는 8자 이상이어야 합니다.";
         }
-        if (!joinInfo.getUserPw().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$")) {
-            return false;
+        if (!joinInfo.getUserPw().matches("^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$")) {
+            return "비밀번호는 최소한 하나의 소문자, 숫자, 특수 문자를 포함해야 합니다.";
         }
-        return true;
+        return null; // 모든 검사를 통과한 경우
+    }
+
+    public boolean isDuplicateId(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+        //Optional - 중복이 있다면 true 없다면 false
+        return user.isPresent();
     }
 }

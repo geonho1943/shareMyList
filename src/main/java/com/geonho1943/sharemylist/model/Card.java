@@ -34,6 +34,9 @@ private String cardYoutDescription;
 @Column(name = "card_yout_reg_data")
 private LocalDateTime cardYoutRegData;
 
+@Column(name = "card_status")
+private boolean cardStatus;
+
     public Card() {}
 
     public Card(CardDto cardDto) {
@@ -77,5 +80,9 @@ private LocalDateTime cardYoutRegData;
 
     public LocalDateTime getCardYoutRegData() {
         return cardYoutRegData;
+    }
+
+    public boolean isCardStatus() {
+        return cardStatus;
     }
 }
