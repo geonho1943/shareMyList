@@ -1,6 +1,7 @@
 package com.geonho1943.sharemylist.service;
 
 import com.geonho1943.sharemylist.dto.CardDto;
+import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.model.Card;
 import com.geonho1943.sharemylist.repository.CardRepository;
 import com.google.gson.Gson;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CardService {
@@ -79,7 +81,7 @@ public class CardService {
             // items 배열에서 첫 번째 아이템을 가져옴
             JsonArray items = json.getAsJsonArray("items");
 
-            if (items != null && items.size() > 0) {
+            if (items != null && !items.isEmpty()) {
                 JsonElement firstItem = items.get(0);
                 JsonObject snippet = firstItem.getAsJsonObject().getAsJsonObject("snippet");
 
@@ -140,5 +142,21 @@ public class CardService {
     public void deleteCard(int cardIdx) {
         cardRepository.deleteByCardIdx(cardIdx);
 
+    }
+
+    public void deactivateCard(List<PlaylistDto> deleteListinfo) {
+        //card 비활성화
+        List<Integer> playlistIdxs;
+        playlistIdxs = deleteListinfo.stream().map(PlaylistDto::getPlaylistIdx).collect(Collectors.toList());
+        //삭제할 플리들의 idx를 리스트로 변경
+
+        List<Card> deactivateCard = cardRepository.findAllByCardPlaylistIdxIn(playlistIdxs);
+        // playlistIdx와 cardPlaylistIdx가 일치하는 Card 엔티티들을 찾음
+
+        deactivateCard.forEach(card -> card.setCardStatus(false));
+        // 각 Card의 status를 false로 설정
+
+        cardRepository.saveAll(deactivateCard);
+        // 변경된 상태를 데이터베이스에 반영
     }
 }

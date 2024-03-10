@@ -1,6 +1,10 @@
 package com.geonho1943.sharemylist.controller;
 
+import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.dto.UserDto;
+import com.geonho1943.sharemylist.model.User;
+import com.geonho1943.sharemylist.service.CardService;
+import com.geonho1943.sharemylist.service.PlaylistService;
 import com.geonho1943.sharemylist.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -10,11 +14,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlaylistService playlistService;
+    @Autowired
+    private CardService cardService;
 
     @GetMapping("/login")
     public String userLogin() {
@@ -57,12 +68,17 @@ public class UserController {
     @PostMapping("/resign")
     public String userResign(HttpSession httpSession, Model model, UserDto resignInfo){
         try {
+            List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(resignInfo.getUserIdx());
+            cardService.deactivateCard(deleteListinfo);
+            //카드 비활성화
+            playlistService.deactivatePlaylist(deleteListinfo);
+            //플리 비활성화
             userService.resgin(resignInfo);
+            // 계정 비활성화
             httpSession.invalidate();
             model.addAttribute("success", "userResignSuccess");
             return "user/userlogin";
         }catch (Exception e){
-            //userService.resgin 에서 문제 발생시 예외처리
             model.addAttribute("error", "failedResginFromUserInfo");
             return "user/userlogin";
         }

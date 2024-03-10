@@ -85,4 +85,8 @@ private boolean cardStatus;
     public boolean isCardStatus() {
         return cardStatus;
     }
+
+    public void setCardStatus(boolean cardStatus) {
+        this.cardStatus = cardStatus;
+    }
 }

@@ -94,4 +94,5 @@ public class User {
     public void setUserSalt(String userSalt) {
         this.userSalt = userSalt;
     }
+
 }

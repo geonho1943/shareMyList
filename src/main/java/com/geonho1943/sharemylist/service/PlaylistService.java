@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PlaylistService {
@@ -64,5 +65,22 @@ public class PlaylistService {
             throw new Exception("타인의 리스트를 변경할수 없습니다");
         }
 
+    }
+
+
+    public void deactivatePlaylist(List<PlaylistDto> deleteListinfo) {
+        //playlist 비활성화
+        List<Playlist> deactivatePlaylist = new ArrayList<>();
+
+        // deleteListinfo에서 각 PlaylistDto 객체를 순회
+        for (PlaylistDto playlistDto : deleteListinfo) {
+            Playlist playlist = new Playlist(
+                    playlistDto.getPlaylistIdx(),playlistDto.getPlaylistUserIdx(),
+                    playlistDto.getPlaylistName(),false,// 상태를 비활성화로 설정
+                    playlistDto.getPlaylistIsBoolean());
+            deactivatePlaylist.add(playlist);
+            // 업데이트된 Playlist를 리스트에 추가
+        }
+        playlistRepository.saveAll(deactivatePlaylist);
     }
 }

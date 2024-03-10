@@ -28,41 +28,42 @@ public class UserService {
         User loginInfoEntity = new User(loginInfo.getUserId(), hashedPassword);
         // Entity의 생성자를 사용하여 DTO를 Entity로 변경
 
-        User checkedUserInfoEntity = userRepository.findByUserIdAndUserPw(
-                loginInfoEntity.getUserId(), loginInfoEntity.getUserPw());
+        Optional<User> checkedUserInfoEntity = userRepository.findByUserIdAndUserPw(loginInfoEntity.getUserId(),loginInfoEntity.getUserPw());
         // DB에 유저정보 대조
-
-        // 대조된 유저정보가 없으면 예외 발생
-        if (checkedUserInfoEntity == null) {
+        if (checkedUserInfoEntity.isEmpty()) {
+            // 대조된 유저정보가 없으면 예외 발생
             throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
         }
-        // 계정이 비활성화되어 있으면 예외 발생
-        if (!checkedUserInfoEntity.isUserStatus()) {
+        User user = checkedUserInfoEntity.get();
+        if (!user.isUserStatus()) {
+            // 계정이 비활성화되어 있으면 예외 발생
             throw new RuntimeException("비활성화된 계정입니다. 로그인이 불가능합니다.");
         }
 
     // Entity를 Dto로 반환
     return new UserDto(
-        checkedUserInfoEntity.getUserIdx(), checkedUserInfoEntity.getUserId(),
-        checkedUserInfoEntity.getUserName(), checkedUserInfoEntity.getUserReg(),
-        checkedUserInfoEntity.getUserPrivileges(), checkedUserInfoEntity.getUserSalt());
+            user.getUserIdx(), user.getUserId(),
+            user.getUserName(), user.getUserReg(),
+            user.getUserPrivileges(), user.getUserSalt());
     }
 
 
     public void resgin(UserDto resignInfo) {
         //회원탈퇴
-        User resignInfoEntity = new User(resignInfo.getUserId(), resignInfo.getUserPw());
-        User checkedResignInfoEntity = userRepository.findByUserIdAndUserPw(
-                resignInfoEntity.getUserId(),resignInfoEntity.getUserPw());
-        if (checkedResignInfoEntity == null) throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
-
-        if (checkedResignInfoEntity.isUserStatus()){
-            checkedResignInfoEntity.setUserStatus(false);
-            userRepository.save(checkedResignInfoEntity);
-        }else {
-            throw new IllegalArgumentException("이미 비활성화된 계정입니다. ");
+        User storedSalt = userRepository.findUserSaltByUserId(resignInfo.getUserId());
+        String hashedPassword = hashPassword(resignInfo.getUserPw(), storedSalt.getUserSalt());
+        User resignInfoEntity = new User(resignInfo.getUserId(), hashedPassword);
+        Optional<User> checkedResignInfoEntity = userRepository.findByUserIdAndUserPw(resignInfoEntity.getUserId(),resignInfoEntity.getUserPw());
+        if (checkedResignInfoEntity.isEmpty()) {
+            throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
         }
-
+        User user = checkedResignInfoEntity.get();
+        if (user.isUserStatus()) {
+            user.setUserStatus(false);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("이미 비활성화된 계정입니다.");
+        }
     }
 
     public void saveAccount(UserDto joinInfo) {
