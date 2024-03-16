@@ -82,10 +82,6 @@ private boolean cardStatus;
         return cardYoutRegData;
     }
 
-    public boolean isCardStatus() {
-        return cardStatus;
-    }
-
     public void setCardStatus(boolean cardStatus) {
         this.cardStatus = cardStatus;
     }

@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
-    List<Card> findAll();
+    List<Card> findByCardStatus(boolean b);
 
     Card getAllByCardIdx(int cardIdx);
 

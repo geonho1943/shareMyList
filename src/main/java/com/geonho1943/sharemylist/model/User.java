@@ -1,5 +1,6 @@
 package com.geonho1943.sharemylist.model;
 
+import com.geonho1943.sharemylist.dto.UserDto;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -45,6 +46,17 @@ public class User {
         this.userId = userId;
         this.userPw = userPw;
         this.userName = userName;
+    }
+
+    public User(UserDto resignInfo) {
+        this.userIdx = resignInfo.getUserIdx();
+        this.userId = resignInfo.getUserId();
+        this.userPw = resignInfo.getUserPw();
+        this.userName = resignInfo.getUserName();
+        this.userReg = resignInfo.getUserReg();
+        this.userPrivileges = resignInfo.getUserPrivileges();
+        this.userStatus = resignInfo.isUserStatus();
+        this.userSalt = resignInfo.getUserSalt();
     }
 
     public int getUserIdx() {

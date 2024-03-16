@@ -33,6 +33,7 @@ public class PlaylistService {
 
     public void createPlaylist(int userIdx, String playlistName) {
         Playlist playlist = new Playlist(userIdx, playlistName);
+        playlist.setPlaylistStatus(true);
         try {
             playlistRepository.save(playlist);
         }catch (Exception e){

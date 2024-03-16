@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping("/login")
     public String userLogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
         try {
-            UserDto checkedUserInfo = userService.userLogin(loginInfo);
+            UserDto checkedUserInfo = userService.verification(loginInfo);
             //로그인 정보가 데이터베이스의 유저정보와 일치한다면 유저정보 반환
             if (httpSession.getAttribute("checkedUserInfo") != null) {
                 //반환된 유저 정보가 기존 세션에 있는지 체크
@@ -65,16 +65,19 @@ public class UserController {
         return "user/userresign";
     }
 
+
     @PostMapping("/resign")
     public String userResign(HttpSession httpSession, Model model, UserDto resignInfo){
         try {
-            List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(resignInfo.getUserIdx());
+            UserDto checkedUserInfo = userService.verification(resignInfo);
+            //검증
+            userService.resgin(checkedUserInfo, resignInfo.getUserPw());
+            // 계정 비활성화
+            List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
             cardService.deactivateCard(deleteListinfo);
             //카드 비활성화
             playlistService.deactivatePlaylist(deleteListinfo);
             //플리 비활성화
-            userService.resgin(resignInfo);
-            // 계정 비활성화
             httpSession.invalidate();
             model.addAttribute("success", "userResignSuccess");
             return "user/userlogin";

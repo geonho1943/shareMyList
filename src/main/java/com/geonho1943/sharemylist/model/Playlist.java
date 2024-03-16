@@ -19,7 +19,7 @@ public class Playlist {
     @Column(name = "playlist_name")
     private String playlistName;
 
-    @Column(name = "playlist_status")
+    @Column(name = "playlist_status", nullable = false)
     private Boolean playlistStatus;
 
     @Column(name = "playlist_is_boolean")
@@ -65,4 +65,7 @@ public class Playlist {
         return playlistStatus;
     }
 
+    public void setPlaylistStatus(Boolean playlistStatus) {
+        this.playlistStatus = playlistStatus;
+    }
 }

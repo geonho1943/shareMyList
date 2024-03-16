@@ -32,7 +32,7 @@ public class CardService {
     private String apiKey;
 
     public List<CardDto> getAllCard() {
-        List<Card> allCardEntity = cardRepository.findAll();
+        List<Card> allCardEntity = cardRepository.findByCardStatus(true);
         List<CardDto> allCardDto = new ArrayList<>();
 
         for (Card card : allCardEntity) {
@@ -116,6 +116,7 @@ public class CardService {
         try{
             //DTO객체(videoMetaData)를 Entity(metaData)로 변경하여 save에 사용
             Card metaData = new Card(videoMetaData);
+            metaData.setCardStatus(true);
             cardRepository.save(metaData);
         }catch (Exception e){
             System.out.println(e);
