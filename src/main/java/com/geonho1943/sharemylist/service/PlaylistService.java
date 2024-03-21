@@ -77,8 +77,7 @@ public class PlaylistService {
         for (PlaylistDto playlistDto : deleteListinfo) {
             Playlist playlist = new Playlist(
                     playlistDto.getPlaylistIdx(),playlistDto.getPlaylistUserIdx(),
-                    playlistDto.getPlaylistName(),false,// 상태를 비활성화로 설정
-                    playlistDto.getPlaylistIsBoolean());
+                    playlistDto.getPlaylistName(),false);
             deactivatePlaylist.add(playlist);
             // 업데이트된 Playlist를 리스트에 추가
         }

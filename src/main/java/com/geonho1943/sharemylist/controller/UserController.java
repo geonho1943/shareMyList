@@ -5,6 +5,7 @@ import com.geonho1943.sharemylist.dto.UserDto;
 import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.PlaylistService;
+import com.geonho1943.sharemylist.service.RecordService;
 import com.geonho1943.sharemylist.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -27,6 +28,9 @@ public class UserController {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private RecordService recordService;
+
     @GetMapping("/login")
     public String userLogin() {
         return "user/userlogin";
@@ -46,6 +50,7 @@ public class UserController {
             }
             httpSession.setAttribute("checkedUserInfo", checkedUserInfo);
             //세션을 추가, 로그인 성공
+            recordService.loginlog(checkedUserInfo.getUserIdx());
             return "redirect:/";
         }catch (Exception e){
             //userService.login 에서 문제 발생시 예외처리
@@ -72,6 +77,7 @@ public class UserController {
             UserDto checkedUserInfo = userService.verification(resignInfo);
             //검증
             userService.resgin(checkedUserInfo, resignInfo.getUserPw());
+            recordService.resignlog(checkedUserInfo.getUserIdx());
             // 계정 비활성화
             List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
             cardService.deactivateCard(deleteListinfo);
@@ -105,6 +111,7 @@ public class UserController {
             return "user/userJoin";
         }
         userService.saveAccount(joinInfo);
+        recordService.joinlog(joinInfo.getUserIdx());
         model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
         return "user/userlogin";
     }

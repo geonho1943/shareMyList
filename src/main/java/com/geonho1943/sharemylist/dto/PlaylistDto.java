@@ -6,7 +6,6 @@ public class PlaylistDto {
     private int playlistIdx;
     private int playlistUserIdx;
     private String playlistName;
-    private Boolean playlistIsBoolean;
     private Boolean playlistStatus;
 
     public PlaylistDto() {}
@@ -16,7 +15,6 @@ public class PlaylistDto {
         this.playlistIdx = playlist.getPlaylistIdx();
         this.playlistUserIdx = playlist.getPlaylistUserIdx();
         this.playlistName = playlist.getPlaylistName();
-        this.playlistIsBoolean = playlist.getPlaylistIsBoolean();
         this.playlistStatus = playlist.getPlaylistStatus();
     }
 
@@ -42,14 +40,6 @@ public class PlaylistDto {
 
     public void setPlaylistName(String playlistName) {
         this.playlistName = playlistName;
-    }
-
-    public Boolean getPlaylistIsBoolean() {
-        return playlistIsBoolean;
-    }
-
-    public void setPlaylistIsBoolean(Boolean playlistIsBoolean) {
-        this.playlistIsBoolean = playlistIsBoolean;
     }
 
     public Boolean getPlaylistStatus() {

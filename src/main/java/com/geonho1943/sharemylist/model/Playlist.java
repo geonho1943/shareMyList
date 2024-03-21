@@ -22,10 +22,6 @@ public class Playlist {
     @Column(name = "playlist_status", nullable = false)
     private Boolean playlistStatus;
 
-    @Column(name = "playlist_is_boolean")
-    private Boolean playlistIsBoolean;
-
-
     public Playlist() {}
 
     public Playlist(int playlistUserIdx) {
@@ -37,12 +33,11 @@ public class Playlist {
         this.playlistName = playlistName;
     }
 
-    public Playlist(int playlistIdx, int playlistUserIdx, String playlistName, Boolean playlistStatus, Boolean playlistIsBoolean) {
+    public Playlist(int playlistIdx, int playlistUserIdx, String playlistName, Boolean playlistStatus) {
         this.playlistIdx = playlistIdx;
         this.playlistUserIdx = playlistUserIdx;
         this.playlistName = playlistName;
         this.playlistStatus = playlistStatus;
-        this.playlistIsBoolean = playlistIsBoolean;
     }
 
     public int getPlaylistIdx() {
@@ -55,10 +50,6 @@ public class Playlist {
 
     public String getPlaylistName() {
         return playlistName;
-    }
-
-    public Boolean getPlaylistIsBoolean() {
-        return playlistIsBoolean;
     }
 
     public Boolean getPlaylistStatus() {
