@@ -3,9 +3,11 @@ package com.geonho1943.sharemylist.controller;
 import com.geonho1943.sharemylist.dto.CardDto;
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.dto.UserDto;
+import com.geonho1943.sharemylist.model.EventLog;
 import com.geonho1943.sharemylist.service.CardService;
 
 import com.geonho1943.sharemylist.service.PlaylistService;
+import com.geonho1943.sharemylist.service.RecordService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,9 @@ public class PlaylistController {
 
     @Autowired
     private PlaylistService playlistService;
+
+    @Autowired
+    private RecordService recordService;
 
     @GetMapping("/linkupload")
     public String linkUpload(HttpSession httpSession, Model model) {
@@ -100,6 +105,7 @@ public class PlaylistController {
         if (loggedInUserInfo != null) {
             try {
                 playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
+                recordService.createPlaylistLog(loggedInUserInfo.getUserIdx());
             }catch (Exception e){
                 throw e;
             }
@@ -136,8 +142,9 @@ public class PlaylistController {
             return "user/userlogin";
         }
         List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
+        recordService.checkPlaylistLog(loggedInUserInfo.getUserIdx());
         Collections.reverse(cardInfoList);
-        if (cardInfoList.size() != 0){
+        if (!cardInfoList.isEmpty()){
             model.addAttribute("cardInfoList",cardInfoList);
         }else {
             model.addAttribute("emptyData","emptyCardInfo");
@@ -176,8 +183,10 @@ public class PlaylistController {
     @RequestMapping("/deletePlaylist/{playlistIdx}")
     public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession) throws Exception {
         //플레이리스트삭제
+        //TODO: PL레코드를 참조하는 card레코드 때문에 제약조건위반 페이지 대응 필요: (card가 먼저 삭제 되어야 합니다)
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
+        recordService.deletePlaylistLog(loggedInUserInfo.getUserIdx());
         return "redirect:/playlist";
     }
 

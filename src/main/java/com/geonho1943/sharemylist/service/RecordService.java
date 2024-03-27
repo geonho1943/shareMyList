@@ -15,22 +15,40 @@ public class RecordService {
     private EventLogRepository eventLogRepository;
 
 
-    public void loginlog(int userIdx) {
+    public void loginLog(int userIdx) {
         //로그인시 로그
-        EventLog joinLog = new EventLog(userIdx,"login");
-        eventLogRepository.save(joinLog);
+        EventLog loginLog = new EventLog(userIdx,"user/login");
+        eventLogRepository.save(loginLog);
     }
 
-    public void joinlog(int userIdx){
+    public void joinLog(int userIdx){
         //회원가입시 로그
-        EventLog joinLog = new EventLog(userIdx,"join");
+        EventLog joinLog = new EventLog(userIdx,"user/join");
         eventLogRepository.save(joinLog);
     }
 
-    public void resignlog(int userIdx){
+    public void resignLog(int userIdx){
         //회원탈퇴시 로그
-        EventLog joinLog = new EventLog(userIdx,"resign");
-        eventLogRepository.save(joinLog);
+        EventLog resignLog = new EventLog(userIdx,"user/resign");
+        eventLogRepository.save(resignLog);
+    }
+
+    public void createPlaylistLog(int userIdx){
+        //playlist 생성 로그
+        EventLog createPlaylistLog = new EventLog(userIdx,"PL/create");
+        eventLogRepository.save(createPlaylistLog);
+    }
+
+    public void deletePlaylistLog(int userIdx){
+        //playlist 삭제 로그
+        EventLog deletePlaylistLog = new EventLog(userIdx, "PL/delete");
+        eventLogRepository.save(deletePlaylistLog);
+    }
+
+    public void checkPlaylistLog(int userIdx){
+        //playlist 조회 로그
+        EventLog checkPlaylistLog = new EventLog(userIdx, "PL/check");
+        eventLogRepository.save(checkPlaylistLog);
     }
 
 

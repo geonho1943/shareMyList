@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class EventLog {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_idx")
     private int logIdx;
 
