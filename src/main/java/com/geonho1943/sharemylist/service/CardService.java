@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -130,7 +129,7 @@ public class CardService {
     }
 
     public List<CardDto> getCardListByPlaylist(int playlistIdx) {
-//        cardPlaylistIdx가 일치하는 필드를 list로 반환
+        //cardPlaylistIdx가 일치하는 필드를 list로 반환
         List<Card> cardInfoListEntity = cardRepository.getAllByCardPlaylistIdx(playlistIdx);
         List<CardDto> cardInfoList = new ArrayList<>();
         for (Card card : cardInfoListEntity) {

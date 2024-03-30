@@ -13,7 +13,6 @@ public class UserDto {
     private boolean userStatus;
     private String userSalt;
 
-    // 기본 생성자 및 모든 필드를 포함하는 생성자
     public UserDto() {}
 
     public UserDto(int userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges, boolean userStatus, String userSalt) {
@@ -26,7 +25,6 @@ public class UserDto {
         this.userStatus = userStatus;
         this.userSalt = userSalt;
     }
-
 
     public int getUserIdx() {
         return userIdx;

@@ -7,16 +7,13 @@ import com.geonho1943.sharemylist.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PlaylistService {
     @Autowired
     private PlaylistRepository playlistRepository;
-
     @Autowired
     private CardRepository cardRepository;
 

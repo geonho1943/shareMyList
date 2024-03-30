@@ -2,7 +2,6 @@ package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.dto.UserDto;
-import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.PlaylistService;
 import com.geonho1943.sharemylist.service.RecordService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -27,7 +25,6 @@ public class UserController {
     private PlaylistService playlistService;
     @Autowired
     private CardService cardService;
-
     @Autowired
     private RecordService recordService;
 
@@ -69,7 +66,6 @@ public class UserController {
     public String userResign(HttpSession httpSession){
         return "user/userresign";
     }
-
 
     @PostMapping("/resign")
     public String userResign(HttpSession httpSession, Model model, UserDto resignInfo){

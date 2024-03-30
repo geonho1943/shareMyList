@@ -1,8 +1,6 @@
 package com.geonho1943.sharemylist.model;
 
 import jakarta.persistence.*;
-
-import javax.xml.crypto.Data;
 import java.sql.Timestamp;
 
 @Entity
@@ -10,7 +8,6 @@ import java.sql.Timestamp;
 public class EventLog {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_idx")
     private int logIdx;
 

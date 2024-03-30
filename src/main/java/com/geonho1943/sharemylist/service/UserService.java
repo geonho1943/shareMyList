@@ -5,7 +5,6 @@ import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -46,7 +45,6 @@ public class UserService {
             user.getUserPrivileges(), user.isUserStatus(), user.getUserSalt());
     }
 
-
     public void resgin(UserDto resignInfo, String userPw) {
         //회원탈퇴
         if (resignInfo.isUserStatus()){
@@ -71,7 +69,6 @@ public class UserService {
         joinInfoEntity.setUserStatus(true);
         joinInfoEntity.setUserPrivileges(1);
         joinInfoEntity.setUserSalt(salt);
-
         userRepository.save(joinInfoEntity);
     }
 
