@@ -48,6 +48,7 @@ public class UserController {
             httpSession.setAttribute("checkedUserInfo", checkedUserInfo);
             //세션을 추가, 로그인 성공
             recordService.loginLog(checkedUserInfo.getUserIdx());
+            // 유저 로그인 정보 저장
             return "redirect:/";
         }catch (Exception e){
             //userService.login 에서 문제 발생시 예외처리
@@ -74,6 +75,7 @@ public class UserController {
             //검증
             userService.resgin(checkedUserInfo, resignInfo.getUserPw());
             recordService.resignLog(checkedUserInfo.getUserIdx());
+            // 유저 탈퇴 정보 저장
             // 계정 비활성화
             List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
             cardService.deactivateCard(deleteListinfo);
@@ -108,6 +110,7 @@ public class UserController {
         }
         userService.saveAccount(joinInfo);
         recordService.joinLog(joinInfo.getUserIdx());
+        // 유저 가입 정보 저장
         model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
         return "user/userlogin";
     }

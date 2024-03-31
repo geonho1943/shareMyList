@@ -46,5 +46,22 @@ public class RecordService {
         eventLogRepository.save(checkPlaylistLog);
     }
 
+    public void createCardLog(int userIdx){
+        //card 생성 로그
+        EventLog createPlaylistLog = new EventLog(userIdx,"card/create");
+        eventLogRepository.save(createPlaylistLog);
+    }
+
+    public void deleteCardLog(int userIdx){
+        //card 삭제 로그
+        EventLog createPlaylistLog = new EventLog(userIdx,"card/delete");
+        eventLogRepository.save(createPlaylistLog);
+    }
+
+    public void checkCardLog(int userIdx){
+        //card 조회 로그
+        EventLog createPlaylistLog = new EventLog(userIdx,"card/check");
+        eventLogRepository.save(createPlaylistLog);
+    }
 
 }

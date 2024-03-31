@@ -82,7 +82,9 @@ public class PlaylistController {
     }
 
     @PostMapping("/submitYoutubeLink")
-    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx) {
+    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession) {
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+
         String videoId = cardService.youtubeLinkParser(youtubeLink);
         // URL 파싱
         CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
@@ -91,6 +93,8 @@ public class PlaylistController {
         //유저가 선택한 playlistIdx 추가
         cardService.saveVideoMetaData(videoMetaData);
         //  DB에 저장 (jpa)
+        recordService.createCardLog(loggedInUserInfo.getUserIdx());
+        // card 생성 로그 저장
         return "redirect:/";
     }
 
@@ -114,6 +118,7 @@ public class PlaylistController {
             try {
                 playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
                 recordService.createPlaylistLog(loggedInUserInfo.getUserIdx());
+                // 플리 생성 로그 저장
             }catch (Exception e){
                 throw e;
             }
@@ -127,10 +132,13 @@ public class PlaylistController {
 
     @GetMapping("/cardInfo/{cardIdx}")
     public String cardInfo (@PathVariable int cardIdx, HttpSession httpSession, Model model){
+        //card 조회
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
             CardDto cardInfo = cardService.getCardInfo(cardIdx);
+            recordService.checkCardLog(loggedInUserInfo.getUserIdx());
+            // card 조회 로그 저장
             model.addAttribute("cardInfo", cardInfo);
             return "card/cardinfo";
         }else {
@@ -151,6 +159,7 @@ public class PlaylistController {
         }
         List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
         recordService.checkPlaylistLog(loggedInUserInfo.getUserIdx());
+        // 플리 조회 로그 저장
         Collections.reverse(cardInfoList);
         if (!cardInfoList.isEmpty()){
             model.addAttribute("cardInfoList",cardInfoList);
@@ -180,6 +189,8 @@ public class PlaylistController {
         int verifeduserIdx = playlistService.verifyposs(cardPlaylistIdx);
         if (verifeduserIdx == loggedInUserInfo.getUserIdx()){
             cardService.deleteCard(cardIdx);
+            recordService.deleteCardLog(verifeduserIdx);
+            // card 삭제 로그 저장
         }else {
             model.addAttribute("error", "failedDeleteByIncorInfo");
             return "playlist/playlistinfo";
@@ -195,6 +206,7 @@ public class PlaylistController {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
         recordService.deletePlaylistLog(loggedInUserInfo.getUserIdx());
+        // 플리 삭제 로그 저장
         return "redirect:/playlist";
     }
 
