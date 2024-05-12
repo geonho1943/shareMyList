@@ -25,19 +25,21 @@ public class PlaylistController {
     @Autowired
     private RecordService recordService;
 
-    @RequestMapping("/")
-    public String main(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+    private void addUserInfoToModel(UserDto loggedInUserInfo, Model model) {
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+        }else {
+            model.addAttribute("error", "emptyUserInfo");
         }
-        try {
-            List<CardDto> pt = cardService.getAllCard();
-            Collections.reverse(pt);
-            model.addAttribute("cardList", pt);
-        }catch (Exception e){
-            System.out.println(e);
-        }
+    }
+
+    @RequestMapping("/")
+    public String home(HttpSession httpSession, Model model){
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        List<CardDto> pt = cardService.getAllCard();
+        Collections.reverse(pt);
+        model.addAttribute("cardList", pt);
         return "home";
     }
     @RequestMapping("/search")
@@ -52,47 +54,34 @@ public class PlaylistController {
     @GetMapping("/linkupload")
     public String linkUpload(HttpSession httpSession, Model model) {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
-            //유저의 playlist 목록 조회
-            Collections.reverse(userPlayList);
-            if (userPlayList.size() != 0){
-                model.addAttribute("playlistByUser", userPlayList);
-            }else {
-                model.addAttribute("error", "emptyPlaylist");
-            }
-            return "playlist/linkupload";
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+        Collections.reverse(userPlayList);
+        if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
+        else model.addAttribute("playlistByUser", userPlayList);
+        return "playlist/linkupload";
     }
 
     @GetMapping("/playlist")
     public String playlistUpload(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
-            //유저의 playlist 목록 조회
-            Collections.reverse(userPlayList);
-            if (userPlayList.size() != 0){
-                model.addAttribute("playlistByUser", userPlayList);
-            }else {
-                model.addAttribute("error", "emptyPlaylist");
-            }
-            return "playlist/playlist";
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+        Collections.reverse(userPlayList);
+        if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
+        else model.addAttribute("playlistByUser", userPlayList);
+        return "playlist/playlist";
     }
 
     @PostMapping("/submitYoutubeLink")
     public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession) {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-
         String videoId = cardService.youtubeLinkParser(youtubeLink);
         // URL 파싱
         CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
@@ -100,8 +89,8 @@ public class PlaylistController {
         videoMetaData.setCardPlaylistIdx(playlistIdx);
         //유저가 선택한 playlistIdx 추가
         cardService.saveVideoMetaData(videoMetaData);
-        //  DB에 저장 (jpa)
-        recordService.createCardLog(loggedInUserInfo.getUserIdx());
+        //  DB에 저장
+        recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
         // card 생성 로그 저장
         return "redirect:/";
     }
@@ -109,95 +98,75 @@ public class PlaylistController {
     @GetMapping("/createplaylist")
     public String createPlayList(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            return "playlist/createplaylist";
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
+        return "playlist/createplaylist";
     }
 
     @PostMapping("/createplaylist")
     public String createPlaylist(HttpSession httpSession, Model model, String playlistName){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         //유저정보 확인
-        if (loggedInUserInfo != null) {
-            try {
-                playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
-                recordService.createPlaylistLog(loggedInUserInfo.getUserIdx());
-                // 플리 생성 로그 저장
-            }catch (Exception e){
-                throw e;
-            }
-            return "redirect:/playlist";
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-
+        playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
+        recordService.recordCreatePlaylist(loggedInUserInfo.getUserIdx());
+        return "redirect:/playlist";
     }
 
     @GetMapping("/cardInfo/{cardIdx}")
     public String cardInfo (@PathVariable int cardIdx, HttpSession httpSession, Model model){
         //card 조회
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-            CardDto cardInfo = cardService.getCardInfo(cardIdx);
-            recordService.checkCardLog(loggedInUserInfo.getUserIdx());
-            // card 조회 로그 저장
-            model.addAttribute("cardInfo", cardInfo);
-            return "card/cardinfo";
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
+        CardDto cardInfo = cardService.getCardInfo(cardIdx);
+        recordService.recordCheckCard(loggedInUserInfo.getUserIdx());
+        model.addAttribute("cardInfo", cardInfo);
+        return "card/cardinfo";
+
     }
 
     @GetMapping("/playlistInfo/{playlistIdx}")
     public String playlistInfo (@PathVariable int playlistIdx, HttpSession httpSession, Model model){
         //playlist의 card 조회
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
         List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
-        recordService.checkPlaylistLog(loggedInUserInfo.getUserIdx());
-        // 플리 조회 로그 저장
+        recordService.recordCheckPlaylist(loggedInUserInfo.getUserIdx());
         Collections.reverse(cardInfoList);
-        if (!cardInfoList.isEmpty()){
-            model.addAttribute("cardInfoList",cardInfoList);
-        }else {
+        if (cardInfoList.isEmpty()){
             model.addAttribute("emptyData","emptyCardInfo");
+        }else {
+            model.addAttribute("cardInfoList",cardInfoList);
         }
         return "playlist/playlistinfo";
-
     }
-
 
     @RequestMapping("/deleteCard/{cardPlaylistIdx}/{cardIdx}")
     public String deleteCard(@PathVariable int cardPlaylistIdx, @PathVariable int cardIdx, HttpSession httpSession, Model model){
-        //카드삭제 과정: 검증데이터 조회 > 검증 > 삭제
         //검증 데이터 조회
         //cardPlaylistIdx가 playlist테이블의 playlist_idx와 일치하는 필드의 playlist_useridx 조회
         //본인 검증
         //playlist_useridx가 세션의 loggedInUserInfo.userIdx 와 일치한다면 해당 유저가 생성했던 card 임을 검증하게 됨
         //카드 삭제
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        if (loggedInUserInfo == null){
             return "user/userlogin";
         }
         int verifeduserIdx = playlistService.verifyposs(cardPlaylistIdx);
         if (verifeduserIdx == loggedInUserInfo.getUserIdx()){
             cardService.deleteCard(cardIdx);
-            recordService.deleteCardLog(verifeduserIdx);
+            recordService.recordDeleteCard(verifeduserIdx);
             // card 삭제 로그 저장
         }else {
             model.addAttribute("error", "failedDeleteByIncorInfo");

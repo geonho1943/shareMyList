@@ -19,7 +19,6 @@
                 <p th:if="${error == 'emptyUserInfo'}">로그인 후 서비스 이용이 가능 합니다.</p>
                 <p th:if="${success == 'userResignSuccess'}">회원 탈퇴가 성공적으로 이루어졌습니다.</p>
                 <p th:if="${userJoinSuccess}"><span th:text="${userJoinSuccess}"></span></p>
-
             </div>
             <h2 class="mb-4">로그인</h2>
             <form method="post" action="/login">

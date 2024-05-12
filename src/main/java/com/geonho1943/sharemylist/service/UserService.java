@@ -35,7 +35,7 @@ public class UserService {
         User user = checkedUserInfoEntity.get();
         if (!user.isUserStatus()) {
             // 계정이 비활성화되어 있으면 예외 발생
-            throw new RuntimeException("비활성화된 계정입니다. 검증이 불가능합니다.");
+            throw new IllegalArgumentException("비활성화된 계정입니다. 검증이 불가능합니다.");
         }
 
         // Entity를 Dto로 반환
@@ -102,7 +102,6 @@ public class UserService {
         if (!joinInfo.getUserId().matches("[a-zA-Z0-9]+")) {
             return "ID는 알파벳 대소문자와 숫자만 포함해야 합니다.";
         }
-
         // pw check
         if (joinInfo.getUserPw().length() < 8) {
             return "비밀번호는 8자 이상이어야 합니다.";
