@@ -206,15 +206,15 @@ public class PlaylistController {
         return "redirect:/";
     }
 
-
     @RequestMapping("/deletePlaylist/{playlistIdx}")
-    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession) throws Exception {
-        //플레이리스트삭제
-        //TODO: PL레코드를 참조하는 card레코드 때문에 제약조건위반 페이지 대응 필요: (card가 먼저 삭제 되어야 합니다)
+    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession, Model model) throws Exception {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
-        recordService.deletePlaylistLog(loggedInUserInfo.getUserIdx());
-        // 플리 삭제 로그 저장
+        try {
+            playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
+            recordService.recordDeletePlaylist(loggedInUserInfo.getUserIdx());
+        }catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
         return "redirect:/playlist";
     }
 

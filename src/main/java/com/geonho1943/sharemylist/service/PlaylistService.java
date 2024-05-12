@@ -54,15 +54,11 @@ public class PlaylistService {
         //플레이리스트 삭제
         Playlist playlistCreatedByUser = playlistRepository.findPlaylistUseridxByPlaylistIdx(playlistIdx);
         if (playlistCreatedByUser.getPlaylistUserIdx() == userIdx){
-            playlistRepository.deleteByPlaylistIdx(playlistIdx);
-            //플레이리스트삭제
             cardRepository.deleteAllByCardPlaylistIdx(playlistIdx);
-            //해당 플레이리스트의 카드 일괄 삭제
+            playlistRepository.deleteByPlaylistIdx(playlistIdx);
         }else {
-            //유저 본인의 생성물이 아닐경우
-            throw new Exception("타인의 리스트를 변경할수 없습니다");
+            throw new Exception("리스트를 변경할수 없습니다");
         }
-
     }
 
 
