@@ -3,6 +3,7 @@ package com.geonho1943.sharemylist.dto;
 import com.geonho1943.sharemylist.model.Card;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CardDto {
 

@@ -19,12 +19,10 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <form class="d-flex mt-3" role="search">
+                    <form class="d-flex mt-3" role="search" method="post" action="/search">
                         <input class="form-control me-2" type="search" placeholder="search playlist or card"
-                            aria-label="찾다" />
-                        <button class="btn btn-outline-success" type="submit">
-                            <div></div>search
-                        </button>
+                            aria-label="찾다" name="keyword" />
+                        <button class="btn btn-outline-success" type="submit">search</button>
                     </form>
 
                     <li class="nav-item">
@@ -34,7 +32,6 @@
                         </div>
                         <div th:if="${loggedInUserInfo != null}">
                             <a>Welcome <span th:text="${loggedInUserInfo.userName}"></span> !</a>
-                            <a class="nav-link" href="#">My Accounts</a>
                             <a class="nav-link" href="/playlist">My PlayList</a>
                             <a class="nav-link" href="/linkupload">add Card</a>
                             <a class="nav-link" href="/logout">Logout</a>

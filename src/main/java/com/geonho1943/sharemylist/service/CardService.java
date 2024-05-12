@@ -141,7 +141,6 @@ public class CardService {
     @Transactional
     public void deleteCard(int cardIdx) {
         cardRepository.deleteByCardIdx(cardIdx);
-
     }
 
     public void deactivateCard(List<PlaylistDto> deleteListinfo) {
@@ -159,4 +158,17 @@ public class CardService {
         cardRepository.saveAll(deactivateCard);
         // 변경된 상태를 데이터베이스에 반영
     }
+
+    public List<CardDto> findAllCardByTitle(String keyword) throws Exception {
+        List<Card> cardEntityList = cardRepository.findAllByCardYoutTitleContaining(keyword);
+        if (cardEntityList.isEmpty()) {
+            throw new Exception("검색결과가 없음");
+        }
+        List<CardDto> cardDtoList = new ArrayList<>();
+        for (Card card : cardEntityList) {
+            cardDtoList.add(new CardDto(card));
+        }
+        return cardDtoList;
+    }
+
 }

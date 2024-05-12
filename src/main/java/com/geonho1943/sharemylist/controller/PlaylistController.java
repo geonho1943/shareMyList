@@ -40,7 +40,15 @@ public class PlaylistController {
         }
         return "home";
     }
-
+    @RequestMapping("/search")
+    public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) throws Exception {
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        addUserInfoToModel(loggedInUserInfo, model);
+        List<CardDto> cardList = cardService.findAllCardByTitle(keyword);
+        Collections.reverse(cardList);
+        model.addAttribute("cardList", cardList);
+        return "home";
+    }
     @GetMapping("/linkupload")
     public String linkUpload(HttpSession httpSession, Model model) {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
