@@ -16,20 +16,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserDto verification(UserDto resignInfo) {
-        User storedSalt = userRepository.findUserSaltByUserId(resignInfo.getUserId());
-        // salt 조회
-
-        String hashedPassword = hashPassword(resignInfo.getUserPw(), storedSalt.getUserSalt());
-        // 입력된 비밀번호와 저장된 salt를 사용하여 해싱
-
-        User loginInfoEntity = new User(resignInfo.getUserId(), hashedPassword);
-        // Entity의 생성자를 사용하여 DTO를 Entity로 변경
-
-        Optional<User> checkedUserInfoEntity = userRepository.findByUserIdAndUserPw(loginInfoEntity.getUserId(),loginInfoEntity.getUserPw());
+    public UserDto verification(UserDto userInfo) {
+        User salt = userRepository.findUserSaltByUserId(userInfo.getUserId());
+        String hashedPassword = hashPassword(userInfo.getUserPw(), salt.getUserSalt());
+        User loginInfoEntity = new User(userInfo);
+        Optional<User> checkedUserInfoEntity = userRepository.findByUserIdAndUserPw(loginInfoEntity.getUserId(), hashedPassword);
         // DB에 유저정보 대조
         if (checkedUserInfoEntity.isEmpty()) {
-            // 대조된 유저정보가 없으면 예외 발생
             throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
         }
         User user = checkedUserInfoEntity.get();
@@ -65,7 +58,7 @@ public class UserService {
         //비밀번호 해싱
 
         // 회원 가입
-        User joinInfoEntity = new User(joinInfo.getUserId(), hashedPassword, joinInfo.getUserName());
+        User joinInfoEntity = new User(joinInfo);
         joinInfoEntity.setUserStatus(true);
         joinInfoEntity.setUserPrivileges(1);
         joinInfoEntity.setUserSalt(salt);

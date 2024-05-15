@@ -25,18 +25,19 @@ public class PlaylistController {
     @Autowired
     private RecordService recordService;
 
-    private void addUserInfoToModel(UserDto loggedInUserInfo, Model model) {
+    private UserDto addUserInfoToModel(HttpSession httpSession, Model model) {
+        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
         }else {
             model.addAttribute("error", "emptyUserInfo");
         }
+        return loggedInUserInfo;
     }
 
     @RequestMapping("/")
     public String home(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        addUserInfoToModel(httpSession, model);
         List<CardDto> pt = cardService.getAllCard();
         Collections.reverse(pt);
         model.addAttribute("cardList", pt);
@@ -44,8 +45,7 @@ public class PlaylistController {
     }
     @RequestMapping("/search")
     public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) throws Exception {
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        addUserInfoToModel(httpSession, model);
         List<CardDto> cardList = cardService.findAllCardByTitle(keyword);
         Collections.reverse(cardList);
         model.addAttribute("cardList", cardList);
@@ -53,8 +53,7 @@ public class PlaylistController {
     }
     @GetMapping("/linkupload")
     public String linkUpload(HttpSession httpSession, Model model) {
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -67,8 +66,7 @@ public class PlaylistController {
 
     @GetMapping("/playlist")
     public String playlistUpload(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -97,8 +95,7 @@ public class PlaylistController {
 
     @GetMapping("/createplaylist")
     public String createPlayList(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -120,8 +117,7 @@ public class PlaylistController {
     @GetMapping("/cardInfo/{cardIdx}")
     public String cardInfo (@PathVariable int cardIdx, HttpSession httpSession, Model model){
         //card 조회
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -135,8 +131,7 @@ public class PlaylistController {
     @GetMapping("/playlistInfo/{playlistIdx}")
     public String playlistInfo (@PathVariable int playlistIdx, HttpSession httpSession, Model model){
         //playlist의 card 조회
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -153,13 +148,7 @@ public class PlaylistController {
 
     @RequestMapping("/deleteCard/{cardPlaylistIdx}/{cardIdx}")
     public String deleteCard(@PathVariable int cardPlaylistIdx, @PathVariable int cardIdx, HttpSession httpSession, Model model){
-        //검증 데이터 조회
-        //cardPlaylistIdx가 playlist테이블의 playlist_idx와 일치하는 필드의 playlist_useridx 조회
-        //본인 검증
-        //playlist_useridx가 세션의 loggedInUserInfo.userIdx 와 일치한다면 해당 유저가 생성했던 card 임을 검증하게 됨
-        //카드 삭제
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        addUserInfoToModel(loggedInUserInfo, model);
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -167,7 +156,6 @@ public class PlaylistController {
         if (verifeduserIdx == loggedInUserInfo.getUserIdx()){
             cardService.deleteCard(cardIdx);
             recordService.recordDeleteCard(verifeduserIdx);
-            // card 삭제 로그 저장
         }else {
             model.addAttribute("error", "failedDeleteByIncorInfo");
             return "playlist/playlistinfo";

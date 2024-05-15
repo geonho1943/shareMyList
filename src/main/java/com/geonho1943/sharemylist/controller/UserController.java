@@ -37,18 +37,13 @@ public class UserController {
     public String userLogin(HttpSession httpSession, HttpServletRequest request, UserDto loginInfo, Model model){
         try {
             UserDto checkedUserInfo = userService.verification(loginInfo);
-            //로그인 정보가 데이터베이스의 유저정보와 일치한다면 유저정보 반환
             if (httpSession.getAttribute("checkedUserInfo") != null) {
-                //반환된 유저 정보가 기존 세션에 있는지 체크
+                //유저 정보가 기존 세션에 있는지 체크
                 httpSession.invalidate();
-                //중복 로그인 방지를 위한 기존 세션 삭제
                 httpSession= request.getSession();
-                //새로운 세션 생성
             }
             httpSession.setAttribute("checkedUserInfo", checkedUserInfo);
-            //세션을 추가, 로그인 성공
             recordService.recordLogin(checkedUserInfo.getUserIdx());
-            // 유저 로그인 정보 저장
             return "redirect:/";
         }catch (Exception e){
             model.addAttribute("error", "failedLoginFromUserInfo");

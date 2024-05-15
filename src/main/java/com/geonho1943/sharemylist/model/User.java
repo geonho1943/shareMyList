@@ -32,20 +32,7 @@ public class User {
     @Column(name = "user_salt")
     private String userSalt;
 
-    public User() {}
 
-    public User(String userId, String userPw) {
-        //로그인 객체를 생성할 생성자
-        this.userId = userId;
-        this.userPw = userPw;
-    }
-
-    public User(String userId, String userPw, String userName) {
-        //회원가입 객체를 생성할 생성자
-        this.userId = userId;
-        this.userPw = userPw;
-        this.userName = userName;
-    }
 
     public User(UserDto resignInfo) {
         this.userIdx = resignInfo.getUserIdx();
