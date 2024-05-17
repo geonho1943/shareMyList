@@ -14,6 +14,11 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
+                <div class="modal-body">
+                    <p th:if="${error == 'invalidYouTubeLink'}"> 올바른 링크가 아닙니다</p>
+                    <p th:if="${error == 'noVideoMetaDate'}"> 호환되지않는 링크입니다</p>
+                </div>
+
                 <form action="/submitYoutubeLink" method="post">
                     <label for="youtubeLinkInput" class="form-label">유튜브 링크 입력</label>
                     <input type="url" name="youtubeLink" placeholder="https://youtu.be/92volEdYcCQ?si=kcu_Fi9bL3eDln6e"

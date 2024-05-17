@@ -30,19 +30,21 @@ public class CardService {
     @Value("${api.key}")
     private String apiKey;
 
-    public List<CardDto> getAllCard() {
-        List<Card> allCardEntity = cardRepository.findByCardStatus(true);
+    private List<CardDto> redefineCardList(List<Card> cardEntityList){
         List<CardDto> allCardDto = new ArrayList<>();
-
-        for (Card card : allCardEntity) {
-            allCardDto.add(new CardDto(card));
+        for (int i = cardEntityList.size() - 1; i >= 0; i--) {
+            allCardDto.add(new CardDto(cardEntityList.get(i)));
         }
         return allCardDto;
     }
 
+    public List<CardDto> getAllCard() {
+        List<Card> allCardEntity = cardRepository.findByCardStatus(true);
+        return redefineCardList(allCardEntity);
+    }
+
     public String youtubeLinkParser(String youtubeLink) {
         String videoId = null;
-
         if (youtubeLink.startsWith("https://youtu.be/")) {
             // YouTube 단축 URL 형태 https://youtu.be/
             videoId = youtubeLink.substring("https://youtu.be/".length(), "https://youtu.be/".length() + 11);
@@ -50,10 +52,13 @@ public class CardService {
             // YouTube 정식 URL 형태 https://www.youtube.com/watch?v=
             videoId = youtubeLink.substring("https://www.youtube.com/watch?v=".length(), "https://www.youtube.com/watch?v=".length() + 11);
         }
+        if (videoId == null){
+            throw new IllegalArgumentException("invalidYouTubeLink");
+        }
         return videoId;
     }
 
-    public CardDto getMetaDataByYoutAPI(String videoId) {
+    public CardDto getMetaDataByYoutApi(String videoId) throws Exception {
         CardDto videoMetaData = null;
         try {
             // YouTube Data API 요청 URL 생성
@@ -105,37 +110,26 @@ public class CardService {
                 videoMetaData.setCardYoutThumNail(thumbnailUrl);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception("noVideoMetaDate");
         }
 
         return videoMetaData;
     }
 
     public void saveVideoMetaData(CardDto videoMetaData) {
-        try{
-            //DTO객체(videoMetaData)를 Entity(metaData)로 변경하여 save에 사용
-            Card metaData = new Card(videoMetaData);
-            metaData.setCardStatus(true);
-            cardRepository.save(metaData);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-
+        Card metaData = new Card(videoMetaData);
+        metaData.setCardStatus(true);
+        cardRepository.save(metaData);
     }
 
     public CardDto getCardInfo(int cardIdx) {
-        //idx와 일치하는 card 정보를 반환
         return new CardDto(cardRepository.getAllByCardIdx(cardIdx));
     }
 
     public List<CardDto> getCardListByPlaylist(int playlistIdx) {
         //cardPlaylistIdx가 일치하는 필드를 list로 반환
         List<Card> cardInfoListEntity = cardRepository.getAllByCardPlaylistIdx(playlistIdx);
-        List<CardDto> cardInfoList = new ArrayList<>();
-        for (Card card : cardInfoListEntity) {
-            cardInfoList.add(new CardDto(card));
-        }
-        return cardInfoList;
+        return redefineCardList(cardInfoListEntity);
     }
 
     @Transactional
@@ -164,11 +158,7 @@ public class CardService {
         if (cardEntityList.isEmpty()) {
             throw new Exception("검색결과가 없음");
         }
-        List<CardDto> cardDtoList = new ArrayList<>();
-        for (Card card : cardEntityList) {
-            cardDtoList.add(new CardDto(card));
-        }
-        return cardDtoList;
+        return redefineCardList(cardEntityList);
     }
 
 }

@@ -39,7 +39,6 @@ public class PlaylistController {
     public String home(HttpSession httpSession, Model model){
         addUserInfoToModel(httpSession, model);
         List<CardDto> pt = cardService.getAllCard();
-        Collections.reverse(pt);
         model.addAttribute("cardList", pt);
         return "home";
     }
@@ -47,7 +46,6 @@ public class PlaylistController {
     public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) throws Exception {
         addUserInfoToModel(httpSession, model);
         List<CardDto> cardList = cardService.findAllCardByTitle(keyword);
-        Collections.reverse(cardList);
         model.addAttribute("cardList", cardList);
         return "home";
     }
@@ -80,16 +78,19 @@ public class PlaylistController {
     @PostMapping("/submitYoutubeLink")
     public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession) {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        String videoId = cardService.youtubeLinkParser(youtubeLink);
-        // URL 파싱
-        CardDto videoMetaData = cardService.getMetaDataByYoutAPI(videoId);
-        // youtube data api 요청 > json 값을 파싱해서 card 객체 생성
-        videoMetaData.setCardPlaylistIdx(playlistIdx);
-        //유저가 선택한 playlistIdx 추가
-        cardService.saveVideoMetaData(videoMetaData);
-        //  DB에 저장
-        recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
-        // card 생성 로그 저장
+        try {
+            String videoId = cardService.youtubeLinkParser(youtubeLink);
+            CardDto videoMetaData = cardService.getMetaDataByYoutApi(videoId);
+            videoMetaData.setCardPlaylistIdx(playlistIdx);
+            cardService.saveVideoMetaData(videoMetaData);
+            recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
+        }catch (IllegalArgumentException e ){
+            //link error from user
+            return "playlist/linkupload"+e;
+        } catch (Exception e) {
+            //meta data error
+            throw new RuntimeException(e);
+        }
         return "redirect:/";
     }
 
@@ -137,7 +138,6 @@ public class PlaylistController {
         }
         List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
         recordService.recordCheckPlaylist(loggedInUserInfo.getUserIdx());
-        Collections.reverse(cardInfoList);
         if (cardInfoList.isEmpty()){
             model.addAttribute("emptyData","emptyCardInfo");
         }else {
