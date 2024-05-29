@@ -1,5 +1,7 @@
 package com.geonho1943.sharemylist.dto;
 
+import com.geonho1943.sharemylist.model.User;
+
 import java.time.LocalDateTime;
 
 public class UserDto {
@@ -15,15 +17,14 @@ public class UserDto {
 
     public UserDto() {}
 
-    public UserDto(int userIdx, String userId, String userName, LocalDateTime userReg, int userPrivileges, boolean userStatus, String userSalt) {
-        //인증을 위한 생성자
-        this.userIdx = userIdx;
-        this.userId = userId;
-        this.userName = userName;
-        this.userReg = userReg;
-        this.userPrivileges = userPrivileges;
-        this.userStatus = userStatus;
-        this.userSalt = userSalt;
+    public UserDto(User user) {
+        this.userIdx = user.getUserIdx();
+        this.userId = user.getUserId();
+        this.userName = user.getUserName();
+        this.userReg = user.getUserReg();
+        this.userPrivileges = user.getUserPrivileges();
+        this.userStatus = user.isUserStatus();
+        this.userSalt = user.getUserSalt();
     }
 
     public int getUserIdx() {

@@ -83,7 +83,6 @@ public class UserController {
             model.addAttribute("error", "failedResginFromUserInfo");
             return "user/userlogin";
         }
-
     }
 
     @GetMapping("/join")
@@ -91,7 +90,7 @@ public class UserController {
         return "user/userJoin";
     }
 
-    @PostMapping("join")
+    @PostMapping("/join")
     public String userJoin(UserDto joinInfo, Model model){
         String errorReason = userService.checkAccount(joinInfo);
         if (errorReason != null) {

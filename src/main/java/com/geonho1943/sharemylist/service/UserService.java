@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -17,25 +18,17 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserDto verification(UserDto userInfo) {
-        User salt = userRepository.findUserSaltByUserId(userInfo.getUserId());
-        String hashedPassword = hashPassword(userInfo.getUserPw(), salt.getUserSalt());
-        User loginInfoEntity = new User(userInfo);
-        Optional<User> checkedUserInfoEntity = userRepository.findByUserIdAndUserPw(loginInfoEntity.getUserId(), hashedPassword);
-        // DB에 유저정보 대조
-        if (checkedUserInfoEntity.isEmpty()) {
+        User userInfoByUserId = userRepository.findByUserId(userInfo.getUserId());
+        String hashedPassword = hashPassword(userInfo.getUserPw(), userInfoByUserId.getUserSalt());
+        if (!Objects.equals(userInfoByUserId.getUserPw(), hashedPassword)){
             throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
         }
-        User user = checkedUserInfoEntity.get();
-        if (!user.isUserStatus()) {
+        if (!userInfoByUserId.isUserStatus()) {
             // 계정이 비활성화되어 있으면 예외 발생
             throw new IllegalArgumentException("비활성화된 계정입니다. 검증이 불가능합니다.");
         }
-
         // Entity를 Dto로 반환
-        return new UserDto(
-            user.getUserIdx(), user.getUserId(),
-            user.getUserName(), user.getUserReg(),
-            user.getUserPrivileges(), user.isUserStatus(), user.getUserSalt());
+        return new UserDto(userInfoByUserId);
     }
 
     public void resgin(UserDto resignInfo, String userPw) {
@@ -62,6 +55,7 @@ public class UserService {
         joinInfoEntity.setUserStatus(true);
         joinInfoEntity.setUserPrivileges(1);
         joinInfoEntity.setUserSalt(salt);
+        joinInfoEntity.setUserPw(hashedPassword);
         userRepository.save(joinInfoEntity);
     }
 
@@ -106,9 +100,8 @@ public class UserService {
     }
 
     public boolean isDuplicateId(String userId) {
-        Optional<User> user = userRepository.findByUserId(userId);
-        //Optional - 중복이 있다면 true 없다면 false
-        return user.isPresent();
+        User user = userRepository.findByUserId(userId);
+        return user != null;
     }
 
 }

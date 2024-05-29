@@ -32,7 +32,7 @@ public class User {
     @Column(name = "user_salt")
     private String userSalt;
 
-
+    public User(){};
 
     public User(UserDto resignInfo) {
         this.userIdx = resignInfo.getUserIdx();

@@ -89,16 +89,13 @@ public class CardService {
                 JsonElement firstItem = items.get(0);
                 JsonObject snippet = firstItem.getAsJsonObject().getAsJsonObject("snippet");
 
-                // 필요한 데이터 추출
                 String title = snippet.getAsJsonPrimitive("title").getAsString();
                 String channelTitle = snippet.getAsJsonPrimitive("channelTitle").getAsString();
                 String publishedAt = snippet.getAsJsonPrimitive("publishedAt").getAsString();
                 String description = snippet.getAsJsonPrimitive("description").getAsString();
                 JsonObject thumbnails = snippet.getAsJsonObject("thumbnails");
-                // 여기서 필요한 썸네일 크기 선택
                 String thumbnailUrl = thumbnails.getAsJsonObject("medium").getAsJsonPrimitive("url").getAsString();
 
-                // CardDto 객체 생성
                 videoMetaData = new CardDto();
                 videoMetaData.setCardYoutId(videoId);
                 videoMetaData.setCardPlaylistIdx(3);
