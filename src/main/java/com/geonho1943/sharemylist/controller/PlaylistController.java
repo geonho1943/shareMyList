@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -42,7 +41,6 @@ public class PlaylistController {
             return "user/userlogin";
         }
         List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
-        Collections.reverse(userPlayList);
         if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
         else model.addAttribute("playlistByUser", userPlayList);
         return "playlist/playlist";
@@ -58,7 +56,7 @@ public class PlaylistController {
     }
 
     @PostMapping("/createplaylist")
-    public String createPlaylist(HttpSession httpSession, Model model, String playlistName){
+    public String createPlaylist(HttpSession httpSession, String playlistName){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         //유저정보 확인
         if (loggedInUserInfo == null){

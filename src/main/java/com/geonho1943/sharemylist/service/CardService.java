@@ -32,7 +32,7 @@ public class CardService {
 
     private List<CardDto> redefineCardList(List<Card> cardEntityList){
         List<CardDto> allCardDto = new ArrayList<>();
-        for (int i = cardEntityList.size() - 1; i >= 0; i--) {
+        for (int i = cardEntityList.size()-1; i >= 0; i--) {
             allCardDto.add(new CardDto(cardEntityList.get(i)));
         }
         return allCardDto;
@@ -44,18 +44,20 @@ public class CardService {
     }
 
     public String youtubeLinkParser(String youtubeLink) {
-        String videoId = null;
-        if (youtubeLink.startsWith("https://youtu.be/")) {
-            // YouTube 단축 URL 형태 https://youtu.be/
-            videoId = youtubeLink.substring("https://youtu.be/".length(), "https://youtu.be/".length() + 11);
-        } else if (youtubeLink.startsWith("https://www.youtube.com/watch?v=")) {
-            // YouTube 정식 URL 형태 https://www.youtube.com/watch?v=
-            videoId = youtubeLink.substring("https://www.youtube.com/watch?v=".length(), "https://www.youtube.com/watch?v=".length() + 11);
-        }
-        if (videoId == null){
+        try {
+            String videoId = null;
+            if (youtubeLink.startsWith("https://youtu.be/")) {
+                // YouTube 단축 URL 형태 https://youtu.be/
+                videoId = youtubeLink.substring("https://youtu.be/".length(), "https://youtu.be/".length() + 11);
+            } else if (youtubeLink.startsWith("https://www.youtube.com/watch?v=")) {
+                // YouTube 정식 URL 형태 https://www.youtube.com/watch?v=
+                videoId = youtubeLink.substring("https://www.youtube.com/watch?v=".length(), "https://www.youtube.com/watch?v=".length() + 11);
+            }
+            return videoId;
+        }catch (NullPointerException e){
             throw new IllegalArgumentException("invalidYouTubeLink");
         }
-        return videoId;
+
     }
 
     public CardDto getMetaDataByYoutApi(String videoId) throws Exception {
@@ -106,11 +108,10 @@ public class CardService {
                 videoMetaData.setCardYoutRegData(LocalDateTime.parse(publishedAt, formatter));
                 videoMetaData.setCardYoutThumNail(thumbnailUrl);
             }
-        } catch (Exception e) {
+            return videoMetaData;
+        } catch (IllegalArgumentException e) {
             throw new Exception("noVideoMetaDate");
         }
-
-        return videoMetaData;
     }
 
     public void saveVideoMetaData(CardDto videoMetaData) {
@@ -136,11 +137,11 @@ public class CardService {
 
     public void deactivateCard(List<PlaylistDto> deleteListinfo) {
         //card 비활성화
-        List<Integer> playlistIdxs;
-        playlistIdxs = deleteListinfo.stream().map(PlaylistDto::getPlaylistIdx).collect(Collectors.toList());
+        List<Integer> playlistIdxList;
+        playlistIdxList = deleteListinfo.stream().map(PlaylistDto::getPlaylistIdx).collect(Collectors.toList());
         //삭제할 플리들의 idx를 리스트로 변경
 
-        List<Card> deactivateCard = cardRepository.findAllByCardPlaylistIdxIn(playlistIdxs);
+        List<Card> deactivateCard = cardRepository.findAllByCardPlaylistIdxIn(playlistIdxList);
         // playlistIdx와 cardPlaylistIdx가 일치하는 Card 엔티티들을 찾음
 
         deactivateCard.forEach(card -> card.setCardStatus(false));
@@ -150,11 +151,8 @@ public class CardService {
         // 변경된 상태를 데이터베이스에 반영
     }
 
-    public List<CardDto> findAllCardByTitle(String keyword) throws Exception {
+    public List<CardDto> findAllCardByTitle(String keyword) {
         List<Card> cardEntityList = cardRepository.findAllByCardYoutTitleContaining(keyword);
-        if (cardEntityList.isEmpty()) {
-            throw new Exception("검색결과가 없음");
-        }
         return redefineCardList(cardEntityList);
     }
 

@@ -18,7 +18,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     void deleteByCardIdx(int cardIdx);
 
-    List<Card> findAllByCardPlaylistIdxIn(List<Integer> playlistIdxs);
+    List<Card> findAllByCardPlaylistIdxIn(List<Integer> playIdxList);
 
     List<Card> findAllByCardYoutTitleContaining(String cardTitle);
 }

@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/resign")
-    public String userResign(HttpSession httpSession){
+    public String userResign(){
         return "user/userresign";
     }
 
@@ -67,20 +67,22 @@ public class UserController {
         try {
             UserDto checkedUserInfo = userService.verification(resignInfo);
             //검증
-            userService.resgin(checkedUserInfo, resignInfo.getUserPw());
+            userService.resign(checkedUserInfo, resignInfo.getUserPw());
             recordService.recordResign(checkedUserInfo.getUserIdx());
             // 유저 탈퇴 정보 저장
             // 계정 비활성화
             List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
-            cardService.deactivateCard(deleteListinfo);
-            //카드 비활성화
+            if (!deleteListinfo.isEmpty()) {
+                cardService.deactivateCard(deleteListinfo);
+                //카드 비활성화
+            }
             playlistService.deactivatePlaylist(deleteListinfo);
             //플리 비활성화
             httpSession.invalidate();
             model.addAttribute("success", "userResignSuccess");
             return "user/userlogin";
         }catch (Exception e){
-            model.addAttribute("error", "failedResginFromUserInfo");
+            model.addAttribute("error", "failedResign");
             return "user/userlogin";
         }
     }
@@ -92,20 +94,26 @@ public class UserController {
 
     @PostMapping("/join")
     public String userJoin(UserDto joinInfo, Model model){
-        String errorReason = userService.checkAccount(joinInfo);
-        if (errorReason != null) {
-            model.addAttribute("error", errorReason);
+        try {
+            String errorReason = userService.checkAccount(joinInfo);
+            if (errorReason!=null) {
+                model.addAttribute("error", errorReason);
+                return "user/userJoin";
+            }
+            if (userService.isDuplicateId(joinInfo.getUserId())) {
+                model.addAttribute("error", "다른 id를 사용해주세요.");
+                return "user/userJoin";
+            }
+            userService.saveAccount(joinInfo);
+            recordService.recordJoin(joinInfo.getUserIdx());
+            // 유저 가입 정보 저장
+            model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
+            return "user/userlogin";
+        }catch (RuntimeException e){
+            model.addAttribute("error", "회원가입중 문제가 발생했습니다 나중에 다시 시도해주세요");
             return "user/userJoin";
         }
-        if (userService.isDuplicateId(joinInfo.getUserId())) {
-            model.addAttribute("error", "다른 id를 사용헤주세요.");
-            return "user/userJoin";
-        }
-        userService.saveAccount(joinInfo);
-        recordService.recordJoin(joinInfo.getUserIdx());
-        // 유저 가입 정보 저장
-        model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
-        return "user/userlogin";
+
     }
 
 }

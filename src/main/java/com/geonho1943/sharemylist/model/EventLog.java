@@ -20,11 +20,9 @@ public class EventLog {
     @Column(name = "active_reg")
     private Timestamp activeReg;
 
-    public EventLog() {
-    }
+    public EventLog() {}
 
     public EventLog(int userIdx, String activeType) {
-        //유저 로그를 위한 생성자
         this.userIdx = userIdx;
         this.activeType = activeType;
     }

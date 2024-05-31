@@ -8,7 +8,8 @@ import java.util.List;
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
-    List<Playlist> findByPlaylistUserIdx(int playlistUserIdx);
+//    List<Playlist> findByPlaylistUserIdx(int playlistUserIdx);
+    List<Playlist> findByPlaylistUserIdxAndPlaylistStatus(int playlistUserIdx, boolean playlistStatus);
 
     Playlist findPlaylistUseridxByPlaylistIdx(int cardPlaylistIdx);
 

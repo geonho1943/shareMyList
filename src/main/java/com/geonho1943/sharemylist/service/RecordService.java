@@ -10,58 +10,46 @@ public class RecordService {
     @Autowired
     private EventLogRepository eventLogRepository;
 
-    public void recordLogin(int userIdx) {
-        //로그인시 로그
-        EventLog loginLog = new EventLog(userIdx,"user/login");
+    private void recodeEvent(int userIdx, String logType){
+        EventLog loginLog = new EventLog(userIdx,logType);
         eventLogRepository.save(loginLog);
     }
 
+    public void recordLogin(int userIdx) {
+        recodeEvent(userIdx,"user/login");
+    }
+
     public void recordJoin(int userIdx){
-        //회원가입시 로그
-        EventLog joinLog = new EventLog(userIdx,"user/join");
-        eventLogRepository.save(joinLog);
+        recodeEvent(userIdx,"user/join");
     }
 
     public void recordResign(int userIdx){
-        //회원탈퇴시 로그
-        EventLog resignLog = new EventLog(userIdx,"user/resign");
-        eventLogRepository.save(resignLog);
+        recodeEvent(userIdx,"user/resign");
     }
 
     public void recordCreatePlaylist(int userIdx){
-        //playlist 생성 로그
-        EventLog createPlaylistLog = new EventLog(userIdx,"PL/create");
-        eventLogRepository.save(createPlaylistLog);
+        recodeEvent(userIdx,"PL/create");
     }
 
     public void recordDeletePlaylist(int userIdx){
-        //playlist 삭제 로그
-        EventLog deletePlaylistLog = new EventLog(userIdx, "PL/delete");
-        eventLogRepository.save(deletePlaylistLog);
+        recodeEvent(userIdx, "PL/delete");
     }
 
     public void recordCheckPlaylist(int userIdx){
         //playlist 조회 로그
-        EventLog checkPlaylistLog = new EventLog(userIdx, "PL/check");
-        eventLogRepository.save(checkPlaylistLog);
+        recodeEvent(userIdx, "PL/check");
     }
 
     public void recordCreateCard(int userIdx){
-        //card 생성 로그
-        EventLog createPlaylistLog = new EventLog(userIdx,"card/create");
-        eventLogRepository.save(createPlaylistLog);
+        recodeEvent(userIdx,"card/create");
     }
 
     public void recordDeleteCard(int userIdx){
-        //card 삭제 로그
-        EventLog createPlaylistLog = new EventLog(userIdx,"card/delete");
-        eventLogRepository.save(createPlaylistLog);
+        recodeEvent(userIdx,"card/delete");
     }
 
     public void recordCheckCard(int userIdx){
-        //card 조회 로그
-        EventLog createPlaylistLog = new EventLog(userIdx,"card/check");
-        eventLogRepository.save(createPlaylistLog);
+        recodeEvent(userIdx,"card/check");
     }
 
 }

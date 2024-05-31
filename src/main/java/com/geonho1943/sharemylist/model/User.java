@@ -32,17 +32,17 @@ public class User {
     @Column(name = "user_salt")
     private String userSalt;
 
-    public User(){};
+    public User(){}
 
-    public User(UserDto resignInfo) {
-        this.userIdx = resignInfo.getUserIdx();
-        this.userId = resignInfo.getUserId();
-        this.userPw = resignInfo.getUserPw();
-        this.userName = resignInfo.getUserName();
-        this.userReg = resignInfo.getUserReg();
-        this.userPrivileges = resignInfo.getUserPrivileges();
-        this.userStatus = resignInfo.isUserStatus();
-        this.userSalt = resignInfo.getUserSalt();
+    public User(UserDto userDto) {
+        this.userIdx = userDto.getUserIdx();
+        this.userId = userDto.getUserId();
+        this.userPw = userDto.getUserPw();
+        this.userName = userDto.getUserName();
+        this.userReg = userDto.getUserReg();
+        this.userPrivileges = userDto.getUserPrivileges();
+        this.userStatus = userDto.isUserStatus();
+        this.userSalt = userDto.getUserSalt();
     }
 
     public int getUserIdx() {

@@ -18,12 +18,10 @@ public class PlaylistService {
     private CardRepository cardRepository;
 
     public List<PlaylistDto> getPlaylistByOneUser(int playlistUserIdx) {
-        int temp = playlistUserIdx;
-        List<Playlist> allPlaylistEntityByOneUser = playlistRepository.findByPlaylistUserIdx(temp);
-
+        List<Playlist> allPlaylistEntityByOneUser = playlistRepository.findByPlaylistUserIdxAndPlaylistStatus(playlistUserIdx,true);
         List<PlaylistDto> allPlaylistDtoByOneUser = new ArrayList<>();
-        for (Playlist playlist : allPlaylistEntityByOneUser){
-            allPlaylistDtoByOneUser.add(new PlaylistDto(playlist));
+        for (int i = allPlaylistEntityByOneUser.size()-1; i >= 0; i--) {
+            allPlaylistDtoByOneUser.add(new PlaylistDto(allPlaylistEntityByOneUser.get(i)));
         }
         return allPlaylistDtoByOneUser;
     }
@@ -31,22 +29,12 @@ public class PlaylistService {
     public void createPlaylist(int userIdx, String playlistName) {
         Playlist playlist = new Playlist(userIdx, playlistName);
         playlist.setPlaylistStatus(true);
-        try {
-            playlistRepository.save(playlist);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-
+        playlistRepository.save(playlist);
     }
 
-    public int verifyposs(int cardPlaylistIdx) {
-        Playlist temp = null;
-        try {
-            temp = playlistRepository.findPlaylistUseridxByPlaylistIdx(cardPlaylistIdx);
-        } catch (NullPointerException e) {
-            System.out.println(e);
-        }
-        return temp.getPlaylistUserIdx();
+    public boolean isValidateCard(int cardPlaylistIdx, int userIdx) {
+        Playlist playlistToCheck = playlistRepository.findPlaylistUseridxByPlaylistIdx(cardPlaylistIdx);
+        return playlistToCheck.getPlaylistUserIdx() == userIdx;
     }
 
     @Transactional
@@ -57,7 +45,7 @@ public class PlaylistService {
             cardRepository.deleteAllByCardPlaylistIdx(playlistIdx);
             playlistRepository.deleteByPlaylistIdx(playlistIdx);
         }else {
-            throw new Exception("리스트를 변경할수 없습니다");
+            throw new Exception("unableModifyPlaylist");
         }
     }
 
@@ -66,13 +54,11 @@ public class PlaylistService {
         //playlist 비활성화
         List<Playlist> deactivatePlaylist = new ArrayList<>();
 
-        // deleteListinfo에서 각 PlaylistDto 객체를 순회
+        // deleteListinfo에서 각 PlaylistDto 객체를 순회하며 status를 비활성화하도록 수정
         for (PlaylistDto playlistDto : deleteListinfo) {
-            Playlist playlist = new Playlist(
-                    playlistDto.getPlaylistIdx(),playlistDto.getPlaylistUserIdx(),
-                    playlistDto.getPlaylistName(),false);
+            Playlist playlist = new Playlist(playlistDto);
+            playlist.setPlaylistStatus(false);
             deactivatePlaylist.add(playlist);
-            // 업데이트된 Playlist를 리스트에 추가
         }
         playlistRepository.saveAll(deactivatePlaylist);
     }

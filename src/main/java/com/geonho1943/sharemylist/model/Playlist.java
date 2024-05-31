@@ -1,5 +1,6 @@
 package com.geonho1943.sharemylist.model;
 
+import com.geonho1943.sharemylist.dto.PlaylistDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,20 +22,16 @@ public class Playlist {
 
     public Playlist() {}
 
-    public Playlist(int playlistUserIdx) {
-        this.playlistUserIdx = playlistUserIdx;
-    }
-
     public Playlist(int playlistUserIdx, String playlistName) {
         this.playlistUserIdx = playlistUserIdx;
         this.playlistName = playlistName;
     }
 
-    public Playlist(int playlistIdx, int playlistUserIdx, String playlistName, Boolean playlistStatus) {
-        this.playlistIdx = playlistIdx;
-        this.playlistUserIdx = playlistUserIdx;
-        this.playlistName = playlistName;
-        this.playlistStatus = playlistStatus;
+    public Playlist(PlaylistDto playlistDto) {
+        this.playlistIdx = playlistDto.getPlaylistIdx();
+        this.playlistUserIdx = playlistDto.getPlaylistUserIdx();
+        this.playlistName = playlistDto.getPlaylistName();
+        this.playlistStatus = playlistDto.getPlaylistStatus();
     }
 
     public int getPlaylistIdx() {

@@ -11,6 +11,11 @@
 <body class="p-3 m-0 border-0 bg-example m-0 border-0 ">
     <nav th:replace="~{fragments/navigationbar :: navigationbar}"></nav>
     <div class="container mt-5 pt-5">
+        <div class="modal-body pb-3">
+            <div class="modal-body pb-3">
+                <p th:if="${emptyData == 'emptyCard'}">검색결과 일치하는 카드가 없습니다.</p>
+            </div>
+        </div>
         <div class="row row-cols-1 row-cols-lg-2 g-4">
             <div th:each="card : ${cardList}" class="col">
                 <div class="card">

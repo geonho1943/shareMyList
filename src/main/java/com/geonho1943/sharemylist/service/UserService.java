@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -31,13 +30,13 @@ public class UserService {
         return new UserDto(userInfoByUserId);
     }
 
-    public void resgin(UserDto resignInfo, String userPw) {
+    public void resign(UserDto resignInfo, String userPw) {
         //회원탈퇴
         if (resignInfo.isUserStatus()){
-            User resginInfoEntity = new User(resignInfo);
-            resginInfoEntity.setUserStatus(false);
-            resginInfoEntity.setUserPw(hashPassword(userPw, resignInfo.getUserSalt()));
-            userRepository.save(resginInfoEntity);
+            User resignInfoEntity = new User(resignInfo);
+            resignInfoEntity.setUserStatus(false);
+            resignInfoEntity.setUserPw(hashPassword(userPw, resignInfo.getUserSalt()));
+            userRepository.save(resignInfoEntity);
         }else {
             throw new IllegalArgumentException("이미 비활성화된 계정입니다.");
         }
@@ -68,7 +67,6 @@ public class UserService {
     }
 
     private String hashPassword(String password, String salt) {
-        //해싱
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             digest.reset();
@@ -76,8 +74,7 @@ public class UserService {
             byte[] hashedBytes = digest.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

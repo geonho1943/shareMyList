@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -44,9 +43,13 @@ public class CardController {
     }
 
     @RequestMapping("/search")
-    public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) throws Exception {
+    public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) {
         addUserInfoToModel(httpSession, model);
         List<CardDto> cardList = cardService.findAllCardByTitle(keyword);
+        if (cardList.isEmpty()){
+            model.addAttribute("emptyData","emptyCard");
+            return "home";
+        }
         model.addAttribute("cardList", cardList);
         return "home";
     }
@@ -58,14 +61,13 @@ public class CardController {
             return "user/userlogin";
         }
         List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
-        Collections.reverse(userPlayList);
         if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
         else model.addAttribute("playlistByUser", userPlayList);
         return "playlist/linkupload";
     }
 
     @PostMapping("/submitYoutubeLink")
-    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession) {
+    public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession, Model model) {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         try {
             String videoId = cardService.youtubeLinkParser(youtubeLink);
@@ -73,14 +75,13 @@ public class CardController {
             videoMetaData.setCardPlaylistIdx(playlistIdx);
             cardService.saveVideoMetaData(videoMetaData);
             recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
-        }catch (IllegalArgumentException e ){
-            //link error from user
-            return "playlist/linkupload"+e;
+            return "redirect:/";
+        }catch (IllegalArgumentException e){
+            model.addAttribute("error", "noVideoMetaDate");
         } catch (Exception e) {
-            //meta data error
-            throw new RuntimeException(e);
+            model.addAttribute("error", "invalidYouTubeLink");
         }
-        return "redirect:/";
+        return "playlist/linkupload";
     }
 
     @GetMapping("/cardInfo/{cardIdx}")
@@ -102,14 +103,12 @@ public class CardController {
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        int verifeduserIdx = playlistService.verifyposs(cardPlaylistIdx);
-        if (verifeduserIdx == loggedInUserInfo.getUserIdx()){
-            cardService.deleteCard(cardIdx);
-            recordService.recordDeleteCard(verifeduserIdx);
-        }else {
-            model.addAttribute("error", "failedDeleteByIncorInfo");
+        if (!playlistService.isValidateCard(cardPlaylistIdx, loggedInUserInfo.getUserIdx())){
+            model.addAttribute("error", "failedDeleteByCardInfo");
             return "playlist/playlistinfo";
         }
+        cardService.deleteCard(cardIdx);
+        recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
         return "redirect:/";
     }
 
