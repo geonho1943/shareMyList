@@ -81,11 +81,44 @@ ShareMyList/src/main/
 ## 서버 아키텍처 다이어그램
 
 ## userFlow
-![SML_userflow002 drawio](https://github.com/geonho1943/shareMyList/assets/106109077/29c18c20-b072-4582-971f-6cde10caf94b)
+![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/e473eef4-e7ba-4b32-a590-2b2192ed6676)
 
 ## ERD
 
-## api 문서
+## API Document
+
+### User
+| HTTP Method | Endpoint  | Description | Request Parameters   | Response                                                                                              |
+|-------------|-----------|-------------|----------------------|-------------------------------------------------------------------------------------------------------|
+| GET         | /login    | 로그인 페이지 반환  | 없음                   | user/userlogin                                                                                        |
+| POST        | /login    | 로그인 요청 처리   | `UserDto loginInfo`  | 성공 시: redirect:/ <br> 실패 시: user/userlogin + `error`                             |
+| GET         | /logout   | 로그아웃 처리     | 없음                   | redirect:/                                                                                            |
+| GET         | /resign   | 회원 탈퇴 페이지 반환 | 없음                   | user/userresign                                                                                       |
+| POST        | /resign   | 회원 탈퇴 요청 처리 | `UserDto resignInfo` | 성공 시: user/userlogin + `success` <br> 실패 시: user/userlogin + `error`            |
+| GET         | /join     | 회원 가입 페이지 반환 | 없음                   | user/userJoin                                                                                         |
+| POST        | /join     | 회원 가입 요청 처리 | `UserDto joinInfo`   | 성공 시: user/userlogin + `success` <br> 실패 시: user/userJoin + `error` |
+
+### Card
+| HTTP Method | Endpoint  | Description | Request Parameters | Response                                               |
+|-------------|-----------|------------|------------------|--------------------------------------------------------|
+| GET         | /                                 | 홈페이지 반환   | 없음                                     | home + `cardList`                                        |
+| GET         | /search                           | 검색결과 페이지 반환 | `String keyword`                         | home + `cardList or emptyData`                         |
+| GET         | /linkupload                       | 링크 업로드 페이지 반환 | 없음                                     | playlist/linkupload + `userPlayList` or user/userlogin   |
+| POST        | /submitYoutubeLink                | 링크의 메타데이터 저장 | `String youtubeLink`, `int playlistIdx`  | 성공시: redirect:/ <br> 실패 시: playlist/linkupload + `error` |
+| GET         | /cardInfo/{cardIdx}               | 카드 정보 반환 | `int cardIdx`                            | card/cardinfo + `cardInfo` or user/userlogin             |
+| DELETE      | /deleteCard/{cardPlaylistIdx}/{cardIdx} | 카드 삭제   | `int cardPlaylistIdx`, `int cardIdx`     | 성공시: redirect:/ <br> 실패시: playlist/playlistinfo + `error` |
+
+### Playlist
+| HTTP Method | Endpoint                         | Description    | Request Parameters       | Response                                             |                                                            
+|-------------|----------------------------------|----------------|--------------------------|------------------------------------------------------|
+| GET         | /playlist                        | 사용자 플레이리스트 페이지 반환 | 없음                     | playlist/playlist + `userPlayList` or user/userlogin |
+| GET         | /createplaylist                  | 플레이리스트 생성 페이지 반환 | 없음                     | playlist/createplaylist or user/userlogin            |
+| POST        | /createplaylist                  | 플레이리스트 생성      | `String playlistName`    | playlist or user/userlogin                           |
+| GET         | /playlistInfo/{playlistIdx}      | 특정 플레이리스트 정보 반환 | `int playlistIdx`        | playlist/playlistinfo + `cardInfoList or emptyData`  |
+| DELETE      | /deletePlaylist/{playlistIdx}    | 특정 플레이리스트 삭제   | `int playlistIdx`        | 성공시: redirect:/ <br> 실패 시: playlist + `error`        |
+
+
+
 
 ## 환경설정
 application-mariaDB.properties에 데이터베이스 커넥션정보를 기입해야 합니다
@@ -104,4 +137,4 @@ $ java -jar sharemylist*.jar
 ```
 
 ## License
-- MIT License
+- [MIT License](https://github.com/geonho1943/shareMyList?tab=MIT-1-ov-file)
