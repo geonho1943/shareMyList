@@ -81,7 +81,7 @@ ShareMyList/src/main/
 ## 서버 아키텍처 다이어그램
 
 ## userFlow
-![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/e473eef4-e7ba-4b32-a590-2b2192ed6676)
+![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/ceb14aee-b928-4e37-905b-aa2ee0f17cc9)
 
 ## ERD
 
