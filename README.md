@@ -78,12 +78,11 @@ ShareMyList/src/main/
     └── application-mariaDB.properties
 ```
 
-## 서버 아키텍처 다이어그램
-
 ## userFlow
 ![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/ceb14aee-b928-4e37-905b-aa2ee0f17cc9)
 
 ## ERD
+![SML_ERD](https://github.com/geonho1943/shareMyList/assets/106109077/974b50a2-3c63-410a-801c-2b8c61363359)
 
 ## API Document
 
@@ -119,8 +118,8 @@ ShareMyList/src/main/
 
 
 
-
-## 환경설정
+## 실행
+### 환경설정
 application-mariaDB.properties에 데이터베이스 커넥션정보를 기입해야 합니다
 ```
 spring.datasource.url=jdbc:mariadb://'db.server.host.ip':'port'/share_my_list
@@ -128,7 +127,7 @@ spring.datasource.username=root
 spring.datasource.password='passwd'
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 ```
-## 설치
+### 설치
 ```
 $ git@github.com:geonho1943/shareMyList.git
 $ cd shamrmylist
