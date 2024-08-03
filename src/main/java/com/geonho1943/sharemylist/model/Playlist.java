@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 public class Playlist {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "playlist_idx")
     private int playlistIdx;
 

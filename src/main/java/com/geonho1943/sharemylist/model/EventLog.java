@@ -8,8 +8,9 @@ import java.sql.Timestamp;
 public class EventLog {
 
     @Id
-    @Column(name = "log_idx")
-    private int logIdx;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "event_idx")
+    private Long eventIdx;
 
     @Column(name = "user_idx")
     private int userIdx;

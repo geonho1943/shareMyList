@@ -20,11 +20,11 @@ public class RecordService {
     }
 
     public void recordJoin(int userIdx){
-        recodeEvent(userIdx,"user/join");
+        recodeEvent(userIdx,"user/register");
     }
 
     public void recordResign(int userIdx){
-        recodeEvent(userIdx,"user/resign");
+        recodeEvent(userIdx,"user/unregister");
     }
 
     public void recordCreatePlaylist(int userIdx){
@@ -36,7 +36,6 @@ public class RecordService {
     }
 
     public void recordCheckPlaylist(int userIdx){
-        //playlist 조회 로그
         recodeEvent(userIdx, "PL/check");
     }
 

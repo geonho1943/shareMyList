@@ -56,6 +56,7 @@ public class UserService {
         joinInfoEntity.setUserSalt(salt);
         joinInfoEntity.setUserPw(hashedPassword);
         userRepository.save(joinInfoEntity);
+        joinInfo.setUserIdx(joinInfoEntity.getUserIdx());
     }
 
     private String generateSalt() {
