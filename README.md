@@ -4,18 +4,14 @@ SML은 유튜브 영상 링크를 공유할 수 있는 웹사이트입니다.<br
 유저는 플레이리스트를 생성하여 관련 영상을 분류,<br>
 유튜브 영상의 링크를 공유 할수 있습니다.
 
+![sml_main](https://github.com/user-attachments/assets/da46f58c-8964-4899-b6f7-e9ac563ecc62)
+<br>
+
 ## 배포 및 데모
 - [SML 데모 - https://sharemylist.kro.kr](https://sharemylist.kro.kr)
 
 ## 기간
 - 2023 10/20 ~ 2024 05/31
-
-## 기능
-- 회원가입 및 로그인
-- 유튜브 링크 공유
-- 플레이리스트 생성 및 관리
-- 회원 탈퇴 시 생성물 비활성화
-- 관리자 대시보드에서 서비스사용 통계 그래프 제공 (예정)
 
 ## 사용한 기술
 - **백엔드**: Java-17, Spring Boot-3.1.4, Spring Data JPA
@@ -23,6 +19,30 @@ SML은 유튜브 영상 링크를 공유할 수 있는 웹사이트입니다.<br
 - **데이터베이스**: MariaDB-10.11.7
 - **빌드**: Gradle
 - **호스팅**: 오라클 클라우드 (OCI)
+
+## 기능
+- 회원가입 및 로그인
+- 유튜브 링크 공유
+- 플레이리스트 생성 및 관리
+- 영상 카드 생성 및 삭제
+- 회원 탈퇴 시 해당 계정의 생성물 비활성화
+
+<img src="https://github.com/user-attachments/assets/c8834cbf-abd3-479b-b317-91fe915f191e"  width="600"/>
+<br>
+원하는 플레이 리스트를 생성할 수 있습니다.
+
+<br><br>
+
+<img src="https://github.com/user-attachments/assets/93fed84c-58d1-4d40-b101-815124cc4308"  width="600"/>
+<br>
+원하는 playlist에 URL을 입력해 card를 생성할 수 있습니다.
+
+## userFlow
+![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/ceb14aee-b928-4e37-905b-aa2ee0f17cc9)
+
+## ERD
+![SML_ERD](https://github.com/geonho1943/shareMyList/assets/106109077/974b50a2-3c63-410a-801c-2b8c61363359)
+
 
 ## 디랙터리 구조
 각 레이어는 도메인을 기준으로 분리,<br>
@@ -77,12 +97,6 @@ ShareMyList/src/main/
     │   └── home
     └── application-mariaDB.properties
 ```
-
-## userFlow
-![SML_userflow](https://github.com/geonho1943/shareMyList/assets/106109077/ceb14aee-b928-4e37-905b-aa2ee0f17cc9)
-
-## ERD
-![SML_ERD](https://github.com/geonho1943/shareMyList/assets/106109077/974b50a2-3c63-410a-801c-2b8c61363359)
 
 ## API Document
 

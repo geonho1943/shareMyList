@@ -25,11 +25,11 @@
                                 <img th:src="${card.cardYoutThumNail}" class="card-img" alt="youtube thumnail">
                             </a>
                         </div>
-                        <div class="col-lg-6" >
+                        <div class="col-lg-6">
                             <div class="card-body">
                                 <h5 th:text="${card.cardYoutTitle}" class="card-subtitle mb-2 text-muted">card title</h5>
                                 <p th:text="${card.cardYoutChannerName}"></p>
-                                <p th:text="${card.cardYoutRegData}" class="card-text">publishedAt</p>
+                                <p th:text="${#temporals.format(card.cardYoutRegData, 'yyyy-MM-dd HH:mm')}" class="card-text"></p>
                                 <a th:href="@{'cardInfo/' + ${card.cardIdx}}">자세히 보기</a>
                             </div>
                         </div>
