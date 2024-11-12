@@ -33,6 +33,15 @@ public class CardController {
         }
         return loggedInUserInfo;
     }
+    // parseAndSaveMetaData fail 시 modal 유지 메서드
+    private void addModalForFailSubmit(UserDto loggedInUserInfo, Model model) {
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+        if (userPlayList.isEmpty()) {
+            model.addAttribute("error", "emptyPlaylist");
+        } else {
+            model.addAttribute("playlistByUser", userPlayList);
+        }
+    }
 
     @RequestMapping("/")
     public String home(HttpSession httpSession, Model model){
@@ -60,15 +69,14 @@ public class CardController {
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
-        if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
-        else model.addAttribute("playlistByUser", userPlayList);
+        addModalForFailSubmit(loggedInUserInfo, model);
         return "playlist/linkupload";
     }
 
     @PostMapping("/submitYoutubeLink")
     public String parseAndSaveMetaData(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession, Model model) {
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
+        if (loggedInUserInfo == null) return "user/userlogin";
         try {
             String videoId = cardService.youtubeLinkParser(youtubeLink);
             CardDto videoMetaData = cardService.getMetaDataByYoutApi(videoId);
@@ -81,6 +89,7 @@ public class CardController {
         } catch (Exception e) {
             model.addAttribute("error", "invalidYouTubeLink");
         }
+        addModalForFailSubmit(loggedInUserInfo, model);
         return "playlist/linkupload";
     }
 
