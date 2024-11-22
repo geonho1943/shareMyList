@@ -1,9 +1,10 @@
 package com.geonho1943.sharemylist.service;
 
 import com.geonho1943.sharemylist.dto.CardDto;
-import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.model.Card;
+import com.geonho1943.sharemylist.model.Playlist;
 import com.geonho1943.sharemylist.repository.CardRepository;
+import com.geonho1943.sharemylist.repository.PlaylistRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,12 +21,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CardService {
     @Autowired
     private CardRepository cardRepository;
+    @Autowired
+    private PlaylistRepository playlistRepository;
 
     @Value("${api.key}")
     private String apiKey;
@@ -41,6 +43,11 @@ public class CardService {
     public List<CardDto> getAllCard() {
         List<Card> allCardEntity = cardRepository.findByCardStatus(true);
         return redefineCardList(allCardEntity);
+    }
+
+    public CardDto getCardInfo(int cardIdx) {
+        Card cardinfo = cardRepository.findByCardIdxAndCardStatus(cardIdx, true);
+        return new CardDto(cardinfo);
     }
 
     public String youtubeLinkParser(String youtubeLink) {
@@ -100,7 +107,6 @@ public class CardService {
 
                 videoMetaData = new CardDto();
                 videoMetaData.setCardYoutId(videoId);
-                videoMetaData.setCardPlaylistIdx(3);
                 videoMetaData.setCardYoutTitle(title);
                 videoMetaData.setCardYoutChannerName(channelTitle);
                 videoMetaData.setCardYoutDescription(description);
@@ -114,41 +120,26 @@ public class CardService {
         }
     }
 
-    public void saveVideoMetaData(CardDto videoMetaData) {
+    @Transactional
+    public void saveCardToPlaylist(CardDto videoMetaData, int playlistIdx) {
+        Playlist playlist = playlistRepository.findById((long) playlistIdx).orElseThrow(() -> new RuntimeException("Playlist not found"));
         Card metaData = new Card(videoMetaData);
         metaData.setCardStatus(true);
+        metaData.setPlaylist(playlist);
         cardRepository.save(metaData);
     }
 
-    public CardDto getCardInfo(int cardIdx) {
-        return new CardDto(cardRepository.getAllByCardIdx(cardIdx));
-    }
-
-    public List<CardDto> getCardListByPlaylist(int playlistIdx) {
-        //cardPlaylistIdx가 일치하는 필드를 list로 반환
-        List<Card> cardInfoListEntity = cardRepository.getAllByCardPlaylistIdx(playlistIdx);
+    @Transactional
+    public List<CardDto> findCardsByPlaylist(int playlistIdx) {
+        Playlist playlist = playlistRepository.findById((long) playlistIdx).orElseThrow(() -> new RuntimeException("Playlist not found"));
+        List<Card> cardInfoListEntity = cardRepository.findAllByPlaylistAndCardStatus(playlist, true);
         return redefineCardList(cardInfoListEntity);
     }
 
-    @Transactional
-    public void deleteCard(int cardIdx) {
-        cardRepository.deleteByCardIdx(cardIdx);
-    }
-
-    public void deactivateCard(List<PlaylistDto> deleteListinfo) {
-        //card 비활성화
-        List<Integer> playlistIdxList;
-        playlistIdxList = deleteListinfo.stream().map(PlaylistDto::getPlaylistIdx).collect(Collectors.toList());
-        //삭제할 플리들의 idx를 리스트로 변경
-
-        List<Card> deactivateCard = cardRepository.findAllByCardPlaylistIdxIn(playlistIdxList);
-        // playlistIdx와 cardPlaylistIdx가 일치하는 Card 엔티티들을 찾음
-
-        deactivateCard.forEach(card -> card.setCardStatus(false));
-        // 각 Card의 status를 false로 설정
-
-        cardRepository.saveAll(deactivateCard);
-        // 변경된 상태를 데이터베이스에 반영
+    public void deactivateCard(int cardIdx) {
+        Card card = cardRepository.findById((long) cardIdx)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+        card.setCardStatus(false);
     }
 
     public List<CardDto> findAllCardByTitle(String keyword) {

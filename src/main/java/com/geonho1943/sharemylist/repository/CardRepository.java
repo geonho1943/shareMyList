@@ -1,6 +1,7 @@
 package com.geonho1943.sharemylist.repository;
 
 import com.geonho1943.sharemylist.model.Card;
+import com.geonho1943.sharemylist.model.Playlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -10,15 +11,11 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findByCardStatus(boolean b);
 
-    Card getAllByCardIdx(int cardIdx);
+    Card findByCardIdxAndCardStatus(int cardIdx, boolean b);
 
-    List<Card> getAllByCardPlaylistIdx(int playlistIdx);
-
-    void deleteAllByCardPlaylistIdx(int playlistIdx);
+    List<Card> findAllByPlaylistAndCardStatus(Playlist playlist, boolean b);
 
     void deleteByCardIdx(int cardIdx);
-
-    List<Card> findAllByCardPlaylistIdxIn(List<Integer> playIdxList);
 
     List<Card> findAllByCardYoutTitleContaining(String cardTitle);
 }

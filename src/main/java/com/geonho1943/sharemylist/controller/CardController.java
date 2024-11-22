@@ -80,10 +80,9 @@ public class CardController {
         try {
             String videoId = cardService.youtubeLinkParser(youtubeLink);
             CardDto videoMetaData = cardService.getMetaDataByYoutApi(videoId);
-            videoMetaData.setCardPlaylistIdx(playlistIdx);
-            cardService.saveVideoMetaData(videoMetaData);
+            cardService.saveCardToPlaylist(videoMetaData, playlistIdx);
             recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
-            return "redirect:/";
+            return "redirect:/playlistInfo/" + playlistIdx;
         }catch (IllegalArgumentException e){
             model.addAttribute("error", "noVideoMetaDate");
         } catch (Exception e) {
@@ -106,19 +105,21 @@ public class CardController {
         return "card/cardinfo";
     }
 
-    @RequestMapping("/deleteCard/{cardPlaylistIdx}/{cardIdx}")
-    public String deleteCard(@PathVariable int cardPlaylistIdx, @PathVariable int cardIdx, HttpSession httpSession, Model model){
+    @RequestMapping("/deleteCard/{cardIdx}")
+    public String deleteCard(@PathVariable int cardIdx, HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
-        if (loggedInUserInfo == null){
-            return "user/userlogin";
-        }
-        if (!playlistService.isValidateCard(cardPlaylistIdx, loggedInUserInfo.getUserIdx())){
+        if (loggedInUserInfo == null) return "user/userlogin";
+        try {
+            CardDto cardInfo = cardService.getCardInfo(cardIdx);
+            if (playlistService.isValidateCard(cardInfo.getPlaylist().getPlaylistIdx(), loggedInUserInfo.getUserIdx())){
+                cardService.deactivateCard(cardIdx);
+                recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
+                return "redirect:/playlistInfo/" + cardInfo.getPlaylist().getPlaylistIdx();
+            }
+        }catch (Exception e){
             model.addAttribute("error", "failedDeleteByCardInfo");
-            return "playlist/playlistinfo";
         }
-        cardService.deleteCard(cardIdx);
-        recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
-        return "redirect:/";
+        return "playlistinfo";
     }
 
 }

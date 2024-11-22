@@ -1,5 +1,6 @@
 package com.geonho1943.sharemylist.service;
 
+import com.geonho1943.sharemylist.dto.CardDto;
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.model.Playlist;
 import com.geonho1943.sharemylist.repository.CardRepository;
@@ -16,6 +17,8 @@ public class PlaylistService {
     private PlaylistRepository playlistRepository;
     @Autowired
     private CardRepository cardRepository;
+    @Autowired
+    private CardService cardService;
 
     public List<PlaylistDto> getPlaylistByOneUser(int playlistUserIdx) {
         List<Playlist> allPlaylistEntityByOneUser = playlistRepository.findByPlaylistUserIdxAndPlaylistStatus(playlistUserIdx,true);
@@ -34,32 +37,22 @@ public class PlaylistService {
 
     public boolean isValidateCard(int cardPlaylistIdx, int userIdx) {
         Playlist playlistToCheck = playlistRepository.findPlaylistUseridxByPlaylistIdx(cardPlaylistIdx);
-        return playlistToCheck.getPlaylistUserIdx() == userIdx;
+        return playlistToCheck.getPlaylistUserIdx() == userIdx; //본인이면 true
     }
 
     @Transactional
-    public void deletePlaylist(int playlistIdx, int userIdx) throws Exception {
-        //플레이리스트 삭제
+    public void deactivatePlaylist(int playlistIdx, int userIdx) throws Exception {
         Playlist playlistCreatedByUser = playlistRepository.findPlaylistUseridxByPlaylistIdx(playlistIdx);
         if (playlistCreatedByUser.getPlaylistUserIdx() == userIdx){
-            cardRepository.deleteAllByCardPlaylistIdx(playlistIdx);
-            playlistRepository.deleteByPlaylistIdx(playlistIdx);
+            List<CardDto> cards = cardService.findCardsByPlaylist(playlistCreatedByUser.getPlaylistIdx());
+            for (CardDto card : cards) {
+                cardService.deactivateCard(card.getCardIdx());
+            }
+            playlistCreatedByUser.setPlaylistStatus(false);
+            playlistRepository.save(playlistCreatedByUser);
         }else {
             throw new Exception("unableModifyPlaylist");
         }
     }
 
-
-    public void deactivatePlaylist(List<PlaylistDto> deleteListinfo) {
-        //playlist 비활성화
-        List<Playlist> deactivatePlaylist = new ArrayList<>();
-
-        // deleteListinfo에서 각 PlaylistDto 객체를 순회하며 status를 비활성화하도록 수정
-        for (PlaylistDto playlistDto : deleteListinfo) {
-            Playlist playlist = new Playlist(playlistDto);
-            playlist.setPlaylistStatus(false);
-            deactivatePlaylist.add(playlist);
-        }
-        playlistRepository.saveAll(deactivatePlaylist);
-    }
 }

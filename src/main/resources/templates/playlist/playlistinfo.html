@@ -13,6 +13,7 @@
 <div class="container mt-5 pt-5">
   <div class="modal-body pb-3">
     <div class="modal-body pb-3">
+      <p th:if="${successes == 'deactivateCard'}">카드 삭제 성공</p>
       <p th:if="${emptyData == 'emptyCardInfo'}">플레이 리스트에 카드가 없습니다. 카드를 추가해주세요</p>
       <p th:if="${error == 'failedDeleteByCardInfo'}">잘못된 요청으로 인해 카드를 삭제하지 못했습니다</p>
     </div>
@@ -33,7 +34,7 @@
               <p th:text="${card.cardYoutChannerName}"></p>
               <p th:text="${card.cardYoutRegData}" class="card-text">publishedAt</p>
               <a th:href="@{'/cardInfo/' + ${card.cardIdx}}">자세히 보기</a>
-              <a class="btn btn-primary" th:href="@{'/deleteCard/' + ${card.cardPlaylistIdx} + '/' + ${card.cardIdx}}"
+              <a class="btn btn-primary" th:href="@{'/deleteCard/' + ${card.cardIdx}}"
                  role="button">Delete</a>
             </div>
           </div>

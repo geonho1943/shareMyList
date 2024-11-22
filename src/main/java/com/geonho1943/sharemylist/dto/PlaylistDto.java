@@ -7,6 +7,7 @@ public class PlaylistDto {
     private int playlistUserIdx;
     private String playlistName;
     private Boolean playlistStatus;
+    private PlaylistDto playlistDto;
 
     public PlaylistDto() {}
 
@@ -48,5 +49,13 @@ public class PlaylistDto {
 
     public void setPlaylistStatus(Boolean playlistStatus) {
         this.playlistStatus = playlistStatus;
+    }
+
+    public PlaylistDto getPlaylistDto() {
+        return playlistDto;
+    }
+
+    public void setPlaylistDto(PlaylistDto playlistDto) {
+        this.playlistDto = playlistDto;
     }
 }

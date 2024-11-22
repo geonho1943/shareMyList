@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,7 @@ public class UserController {
         return "user/userresign";
     }
 
+    @Transactional
     @PostMapping("/resign")
     public String userResign(HttpSession httpSession, Model model, UserDto resignInfo){
         try {
@@ -73,11 +75,10 @@ public class UserController {
             // 계정 비활성화
             List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
             if (!deleteListinfo.isEmpty()) {
-                cardService.deactivateCard(deleteListinfo);
-                //카드 비활성화
+                for (PlaylistDto playlistDto : deleteListinfo) {
+                    playlistService.deactivatePlaylist(playlistDto.getPlaylistIdx(), checkedUserInfo.getUserIdx());
+                }
             }
-            playlistService.deactivatePlaylist(deleteListinfo);
-            //플리 비활성화
             httpSession.invalidate();
             model.addAttribute("success", "userResignSuccess");
             return "user/userlogin";

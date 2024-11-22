@@ -13,8 +13,9 @@ public class Card {
     @Column(name = "card_idx")
     private int cardIdx;
 
-    @Column(name = "card_playlist_idx")
-    private int cardPlaylistIdx;
+    @ManyToOne
+    @JoinColumn(name = "playlist", nullable = false)
+    private Playlist playlist;
 
     @Column(name = "card_yout_id")
     private String cardYoutId;
@@ -28,7 +29,7 @@ public class Card {
     @Column(name = "card_yout_channername")
     private String cardYoutChannerName;
 
-    @Column(name = "card_yout_description")
+    @Column(name = "card_yout_description", length = 1000)
     private String cardYoutDescription;
 
     @Column(name = "card_yout_reg_data")
@@ -41,21 +42,17 @@ public class Card {
 
     public Card(CardDto cardDto) {
         this.cardIdx = cardDto.getCardIdx();
-        this.cardPlaylistIdx = cardDto.getCardPlaylistIdx();
         this.cardYoutId = cardDto.getCardYoutId();
         this.cardYoutTitle = cardDto.getCardYoutTitle();
         this.cardYoutThumNail = cardDto.getCardYoutThumNail();
         this.cardYoutChannerName = cardDto.getCardYoutChannerName();
         this.cardYoutDescription = cardDto.getCardYoutDescription();
         this.cardYoutRegData = cardDto.getCardYoutRegData();
+        this.playlist = cardDto.getPlaylist();
     }
 
     public int getCardIdx() {
         return cardIdx;
-    }
-
-    public int getCardPlaylistIdx() {
-        return cardPlaylistIdx;
     }
 
     public String getCardYoutId() {
@@ -84,5 +81,18 @@ public class Card {
 
     public void setCardStatus(boolean cardStatus) {
         this.cardStatus = cardStatus;
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+
+    public boolean isCardStatus() {
+        return cardStatus;
     }
 }

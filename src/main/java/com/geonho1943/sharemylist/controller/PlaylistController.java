@@ -24,7 +24,7 @@ public class PlaylistController {
     @Autowired
     private RecordService recordService;
 
-    private UserDto addUserInfoToModel(HttpSession httpSession, Model model) {
+    private UserDto addUserInfoToModel(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         if (loggedInUserInfo != null) {
             model.addAttribute("loggedInUserInfo", loggedInUserInfo);
@@ -74,7 +74,7 @@ public class PlaylistController {
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        List<CardDto> cardInfoList = cardService.getCardListByPlaylist(playlistIdx);
+        List<CardDto> cardInfoList = cardService.findCardsByPlaylist(playlistIdx);
         recordService.recordCheckPlaylist(loggedInUserInfo.getUserIdx());
         if (cardInfoList.isEmpty()){
             model.addAttribute("emptyData","emptyCardInfo");
@@ -85,15 +85,22 @@ public class PlaylistController {
     }
 
     @RequestMapping("/deletePlaylist/{playlistIdx}")
-    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession, Model model) throws Exception {
+    public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         try {
-            playlistService.deletePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
+            // 유저 검즘
+            if (!playlistService.isValidateCard(playlistIdx, loggedInUserInfo.getUserIdx())){
+                model.addAttribute("error","userCheck");
+                return "/playlist";
+            }
+            // plstlist 비활성화
+            playlistService.deactivatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
             recordService.recordDeletePlaylist(loggedInUserInfo.getUserIdx());
+            return "redirect:/playlist";
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
         }
-        return "redirect:/playlist";
+        return "/playlist";
     }
 
 }

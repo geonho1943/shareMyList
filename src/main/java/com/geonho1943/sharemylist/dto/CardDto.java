@@ -1,13 +1,14 @@
 package com.geonho1943.sharemylist.dto;
 
 import com.geonho1943.sharemylist.model.Card;
+import com.geonho1943.sharemylist.model.Playlist;
 
 import java.time.LocalDateTime;
 
 public class CardDto {
 
     private int cardIdx;
-    private int cardPlaylistIdx;
+    private Playlist playlist;
     private String cardYoutId;
     private String cardYoutTitle;
     private String cardYoutThumNail;
@@ -20,7 +21,7 @@ public class CardDto {
 
     public CardDto(Card card) {
         this.cardIdx = card.getCardIdx();
-        this.cardPlaylistIdx = card.getCardPlaylistIdx();
+        this.playlist = card.getPlaylist();
         this.cardYoutId = card.getCardYoutId();
         this.cardYoutTitle = card.getCardYoutTitle();
         this.cardYoutThumNail = card.getCardYoutThumNail();
@@ -35,14 +36,6 @@ public class CardDto {
 
     public void setCardIdx(int cardIdx) {
         this.cardIdx = cardIdx;
-    }
-
-    public int getCardPlaylistIdx() {
-        return cardPlaylistIdx;
-    }
-
-    public void setCardPlaylistIdx(int cardPlaylistIdx) {
-        this.cardPlaylistIdx = cardPlaylistIdx;
     }
 
     public String getCardYoutId() {
@@ -99,5 +92,14 @@ public class CardDto {
 
     public void setCardStatus(boolean cardStatus) {
         this.cardStatus = cardStatus;
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+
+        this.playlist = playlist;
     }
 }
