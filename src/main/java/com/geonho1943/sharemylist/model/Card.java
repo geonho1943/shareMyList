@@ -91,8 +91,4 @@ public class Card {
         this.playlist = playlist;
     }
 
-
-    public boolean isCardStatus() {
-        return cardStatus;
-    }
 }

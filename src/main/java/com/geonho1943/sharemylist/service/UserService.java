@@ -30,12 +30,11 @@ public class UserService {
         return new UserDto(userInfoByUserId);
     }
 
-    public void resign(UserDto resignInfo, String userPw) {
+    public void resign(UserDto resignInfo) {
         //회원탈퇴
         if (resignInfo.isUserStatus()){
             User resignInfoEntity = new User(resignInfo);
             resignInfoEntity.setUserStatus(false);
-            resignInfoEntity.setUserPw(hashPassword(userPw, resignInfo.getUserSalt()));
             userRepository.save(resignInfoEntity);
         }else {
             throw new IllegalArgumentException("이미 비활성화된 계정입니다.");

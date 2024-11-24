@@ -1,20 +1,19 @@
 package com.geonho1943.sharemylist.dto;
 
 import com.geonho1943.sharemylist.model.Playlist;
+import com.geonho1943.sharemylist.model.User;
 
 public class PlaylistDto {
     private int playlistIdx;
-    private int playlistUserIdx;
     private String playlistName;
     private Boolean playlistStatus;
-    private PlaylistDto playlistDto;
+    private User user;
 
     public PlaylistDto() {}
 
     public PlaylistDto(Playlist playlist) {
-        //본인의 playlist 조회용 생성자
         this.playlistIdx = playlist.getPlaylistIdx();
-        this.playlistUserIdx = playlist.getPlaylistUserIdx();
+        this.user = playlist.getUser();
         this.playlistName = playlist.getPlaylistName();
         this.playlistStatus = playlist.getPlaylistStatus();
     }
@@ -25,14 +24,6 @@ public class PlaylistDto {
 
     public void setPlaylistIdx(int playlistIdx) {
         this.playlistIdx = playlistIdx;
-    }
-
-    public int getPlaylistUserIdx() {
-        return playlistUserIdx;
-    }
-
-    public void setPlaylistUserIdx(int playlistUserIdx) {
-        this.playlistUserIdx = playlistUserIdx;
     }
 
     public String getPlaylistName() {
@@ -51,11 +42,7 @@ public class PlaylistDto {
         this.playlistStatus = playlistStatus;
     }
 
-    public PlaylistDto getPlaylistDto() {
-        return playlistDto;
-    }
-
-    public void setPlaylistDto(PlaylistDto playlistDto) {
-        this.playlistDto = playlistDto;
+    public User getUser() {
+        return user;
     }
 }

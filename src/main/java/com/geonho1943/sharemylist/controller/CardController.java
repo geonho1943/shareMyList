@@ -35,7 +35,7 @@ public class CardController {
     }
     // parseAndSaveMetaData fail 시 modal 유지 메서드
     private void addModalForFailSubmit(UserDto loggedInUserInfo, Model model) {
-        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByUser(loggedInUserInfo.getUserIdx());
         if (userPlayList.isEmpty()) {
             model.addAttribute("error", "emptyPlaylist");
         } else {
@@ -46,20 +46,24 @@ public class CardController {
     @RequestMapping("/")
     public String home(HttpSession httpSession, Model model){
         addUserInfoToModel(httpSession, model);
-        List<CardDto> pt = cardService.getAllCard();
-        model.addAttribute("cardList", pt);
+        List<CardDto> cards = cardService.getAllCard();
+        if (cards.isEmpty()){
+            model.addAttribute("emptyData","emptyCard");
+            return "home";
+        }
+        model.addAttribute("cardList", cards);
         return "home";
     }
 
     @RequestMapping("/search")
     public String search(@RequestParam("keyword") String keyword, HttpSession httpSession, Model model) {
         addUserInfoToModel(httpSession, model);
-        List<CardDto> cardList = cardService.findAllCardByTitle(keyword);
-        if (cardList.isEmpty()){
+        List<CardDto> cardsBySearch = cardService.findAllCardByTitle(keyword);
+        if (cardsBySearch.isEmpty()){
             model.addAttribute("emptyData","emptyCard");
             return "home";
         }
-        model.addAttribute("cardList", cardList);
+        model.addAttribute("cardsBySearch", cardsBySearch);
         return "home";
     }
 
@@ -111,7 +115,7 @@ public class CardController {
         if (loggedInUserInfo == null) return "user/userlogin";
         try {
             CardDto cardInfo = cardService.getCardInfo(cardIdx);
-            if (playlistService.isValidateCard(cardInfo.getPlaylist().getPlaylistIdx(), loggedInUserInfo.getUserIdx())){
+            if (playlistService.isValidatePlaylist(cardInfo.getPlaylist().getPlaylistIdx(), loggedInUserInfo.getUserIdx())){
                 cardService.deactivateCard(cardIdx);
                 recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
                 return "redirect:/playlistInfo/" + cardInfo.getPlaylist().getPlaylistIdx();

@@ -94,7 +94,7 @@ public class CardService {
             // items 배열에서 첫 번째 아이템을 가져옴
             JsonArray items = json.getAsJsonArray("items");
 
-            if (items != null && !items.isEmpty()) {
+            if (!items.isEmpty()) {
                 JsonElement firstItem = items.get(0);
                 JsonObject snippet = firstItem.getAsJsonObject().getAsJsonObject("snippet");
 

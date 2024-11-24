@@ -3,8 +3,9 @@ package com.geonho1943.sharemylist.service;
 import com.geonho1943.sharemylist.dto.CardDto;
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.model.Playlist;
-import com.geonho1943.sharemylist.repository.CardRepository;
+import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.repository.PlaylistRepository;
+import com.geonho1943.sharemylist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,43 +17,46 @@ public class PlaylistService {
     @Autowired
     private PlaylistRepository playlistRepository;
     @Autowired
-    private CardRepository cardRepository;
-    @Autowired
     private CardService cardService;
+    @Autowired
+    private UserRepository userRepository;
 
-    public List<PlaylistDto> getPlaylistByOneUser(int playlistUserIdx) {
-        List<Playlist> allPlaylistEntityByOneUser = playlistRepository.findByPlaylistUserIdxAndPlaylistStatus(playlistUserIdx,true);
-        List<PlaylistDto> allPlaylistDtoByOneUser = new ArrayList<>();
-        for (int i = allPlaylistEntityByOneUser.size()-1; i >= 0; i--) {
-            allPlaylistDtoByOneUser.add(new PlaylistDto(allPlaylistEntityByOneUser.get(i)));
+    public List<PlaylistDto> getPlaylistByUser(int userIdx) {
+        User user = userRepository.findByUserIdx(userIdx);
+        List<Playlist> playlistsByUser = playlistRepository.findByUserAndPlaylistStatus(user,true);
+        List<PlaylistDto> playlistsDtoByUser = new ArrayList<>();
+        for (int i = playlistsByUser.size()-1; i >= 0; i--) {
+            playlistsDtoByUser.add(new PlaylistDto(playlistsByUser.get(i)));
         }
-        return allPlaylistDtoByOneUser;
+        return playlistsDtoByUser;
     }
 
     public void createPlaylist(int userIdx, String playlistName) {
-        Playlist playlist = new Playlist(userIdx, playlistName);
+        User user = userRepository.findByUserIdx(userIdx);
+        Playlist playlist = new Playlist();
+        playlist.setPlaylistName(playlistName);
         playlist.setPlaylistStatus(true);
+        playlist.setUser(user);
         playlistRepository.save(playlist);
     }
 
-    public boolean isValidateCard(int cardPlaylistIdx, int userIdx) {
-        Playlist playlistToCheck = playlistRepository.findPlaylistUseridxByPlaylistIdx(cardPlaylistIdx);
-        return playlistToCheck.getPlaylistUserIdx() == userIdx; //본인이면 true
+    public boolean isValidatePlaylist(int playlistIdx, int userIdx) {
+        Playlist playlistToCheck = playlistRepository.findByPlaylistIdx(playlistIdx);
+        return playlistToCheck.getUser().getUserIdx() == userIdx; //본인이면 true
     }
 
     @Transactional
     public void deactivatePlaylist(int playlistIdx, int userIdx) throws Exception {
-        Playlist playlistCreatedByUser = playlistRepository.findPlaylistUseridxByPlaylistIdx(playlistIdx);
-        if (playlistCreatedByUser.getPlaylistUserIdx() == userIdx){
-            List<CardDto> cards = cardService.findCardsByPlaylist(playlistCreatedByUser.getPlaylistIdx());
-            for (CardDto card : cards) {
-                cardService.deactivateCard(card.getCardIdx());
-            }
-            playlistCreatedByUser.setPlaylistStatus(false);
-            playlistRepository.save(playlistCreatedByUser);
-        }else {
+        if (!isValidatePlaylist(playlistIdx, userIdx)) {
             throw new Exception("unableModifyPlaylist");
         }
+        Playlist playlistCreatedByUser = playlistRepository.findByPlaylistIdx(playlistIdx);
+        List<CardDto> cards = cardService.findCardsByPlaylist(playlistCreatedByUser.getPlaylistIdx());
+        for (CardDto card : cards) {
+            cardService.deactivateCard(card.getCardIdx());
+        }
+        playlistCreatedByUser.setPlaylistStatus(false);
+        playlistRepository.save(playlistCreatedByUser);
     }
 
 }

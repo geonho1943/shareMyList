@@ -38,7 +38,6 @@ public class User {
     public User(UserDto userDto) {
         this.userIdx = userDto.getUserIdx();
         this.userId = userDto.getUserId();
-        this.userPw = userDto.getUserPw();
         this.userName = userDto.getUserName();
         this.userReg = userDto.getUserReg();
         this.userPrivileges = userDto.getUserPrivileges();

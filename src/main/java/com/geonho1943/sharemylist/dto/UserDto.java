@@ -47,10 +47,6 @@ public class UserDto {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public LocalDateTime getUserReg() {
         return userReg;
     }
@@ -61,10 +57,6 @@ public class UserDto {
 
     public int getUserPrivileges() {
         return userPrivileges;
-    }
-
-    public void setUserPrivileges(int userPrivileges) {
-        this.userPrivileges = userPrivileges;
     }
 
     public String getUserPw() {

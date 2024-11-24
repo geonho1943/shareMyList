@@ -69,16 +69,15 @@ public class UserController {
         try {
             UserDto checkedUserInfo = userService.verification(resignInfo);
             //검증
-            userService.resign(checkedUserInfo, resignInfo.getUserPw());
-            recordService.recordResign(checkedUserInfo.getUserIdx());
-            // 유저 탈퇴 정보 저장
-            // 계정 비활성화
-            List<PlaylistDto> deleteListinfo = playlistService.getPlaylistByOneUser(checkedUserInfo.getUserIdx());
-            if (!deleteListinfo.isEmpty()) {
-                for (PlaylistDto playlistDto : deleteListinfo) {
+            List<PlaylistDto> deleteListInfo = playlistService.getPlaylistByUser(checkedUserInfo.getUserIdx());
+            if (!deleteListInfo.isEmpty()) {
+                for (PlaylistDto playlistDto : deleteListInfo) {
                     playlistService.deactivatePlaylist(playlistDto.getPlaylistIdx(), checkedUserInfo.getUserIdx());
                 }
             }
+            // 유저 비활성화
+            userService.resign(checkedUserInfo);
+            recordService.recordResign(checkedUserInfo.getUserIdx());
             httpSession.invalidate();
             model.addAttribute("success", "userResignSuccess");
             return "user/userlogin";
@@ -107,11 +106,10 @@ public class UserController {
             }
             userService.saveAccount(joinInfo);
             recordService.recordJoin(joinInfo.getUserIdx());
-            // 유저 가입 정보 저장
             model.addAttribute("userJoinSuccess", "회원가입에 성공했습니다.");
             return "user/userlogin";
         }catch (RuntimeException e){
-            model.addAttribute("error", "회원가입중 문제가 발생했습니다 나중에 다시 시도해주세요");
+            model.addAttribute("error", "회원가입중 문제가 발생했습니다.");
             return "user/userJoin";
         }
 

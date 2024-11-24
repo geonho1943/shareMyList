@@ -40,7 +40,7 @@ public class PlaylistController {
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        List<PlaylistDto> userPlayList = playlistService.getPlaylistByOneUser(loggedInUserInfo.getUserIdx());
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByUser(loggedInUserInfo.getUserIdx());
         if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
         else model.addAttribute("playlistByUser", userPlayList);
         return "playlist/playlist";
@@ -58,11 +58,10 @@ public class PlaylistController {
     @PostMapping("/createplaylist")
     public String createPlaylist(HttpSession httpSession, String playlistName){
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        //유저정보 확인
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        playlistService.createPlaylist(loggedInUserInfo.getUserIdx(),playlistName);
+        playlistService.createPlaylist(loggedInUserInfo.getUserIdx(), playlistName);
         recordService.recordCreatePlaylist(loggedInUserInfo.getUserIdx());
         return "redirect:/playlist";
     }
@@ -89,7 +88,7 @@ public class PlaylistController {
         UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
         try {
             // 유저 검즘
-            if (!playlistService.isValidateCard(playlistIdx, loggedInUserInfo.getUserIdx())){
+            if (!playlistService.isValidatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx())){
                 model.addAttribute("error","userCheck");
                 return "/playlist";
             }

@@ -34,10 +34,6 @@ public class CardDto {
         return cardIdx;
     }
 
-    public void setCardIdx(int cardIdx) {
-        this.cardIdx = cardIdx;
-    }
-
     public String getCardYoutId() {
         return cardYoutId;
     }
@@ -86,20 +82,7 @@ public class CardDto {
         this.cardYoutRegData = cardYoutRegData;
     }
 
-    public boolean isCardStatus() {
-        return cardStatus;
-    }
-
-    public void setCardStatus(boolean cardStatus) {
-        this.cardStatus = cardStatus;
-    }
-
     public Playlist getPlaylist() {
         return playlist;
-    }
-
-    public void setPlaylist(Playlist playlist) {
-
-        this.playlist = playlist;
     }
 }
