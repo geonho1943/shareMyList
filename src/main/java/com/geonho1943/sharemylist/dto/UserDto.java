@@ -47,6 +47,10 @@ public class UserDto {
         return userName;
     }
 
+    public void setUserName(String userName){
+        this.userName = userName;
+    }
+
     public LocalDateTime getUserReg() {
         return userReg;
     }
