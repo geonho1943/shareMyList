@@ -89,7 +89,7 @@ public class UserController {
 
     @GetMapping("/join")
     public String userJoin(){
-        return "user/userJoin";
+        return "user/userjoin";
     }
 
     @PostMapping("/join")
@@ -98,11 +98,11 @@ public class UserController {
             String errorReason = userService.checkAccount(joinInfo);
             if (errorReason!=null) {
                 model.addAttribute("error", errorReason);
-                return "user/userJoin";
+                return "user/userjoin";
             }
             if (userService.isDuplicateId(joinInfo.getUserId())) {
                 model.addAttribute("error", "다른 id를 사용해주세요.");
-                return "user/userJoin";
+                return "user/userjoin";
             }
             userService.saveAccount(joinInfo);
             recordService.recordJoin(joinInfo.getUserIdx());
@@ -110,7 +110,7 @@ public class UserController {
             return "user/userlogin";
         }catch (RuntimeException e){
             model.addAttribute("error", "회원가입중 문제가 발생했습니다.");
-            return "user/userJoin";
+            return "user/userjoin";
         }
 
     }
