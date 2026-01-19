@@ -37,3 +37,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# build artifacts / temp
+tmp_check/
+*.jar
+*.class
