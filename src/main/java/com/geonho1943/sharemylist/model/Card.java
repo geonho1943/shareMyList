@@ -29,7 +29,8 @@ public class Card {
     @Column(name = "card_yout_channername")
     private String cardYoutChannerName;
 
-    @Column(name = "card_yout_description", length = 1000)
+    @Lob
+    @Column(name = "card_yout_description", columnDefinition = "TEXT")
     private String cardYoutDescription;
 
     @Column(name = "card_yout_reg_data")
@@ -40,7 +41,7 @@ public class Card {
 
     public Card() {}
 
-    public Card(CardDto cardDto) {
+    public Card(CardDto cardDto, Playlist playlist) {
         this.cardIdx = cardDto.getCardIdx();
         this.cardYoutId = cardDto.getCardYoutId();
         this.cardYoutTitle = cardDto.getCardYoutTitle();
@@ -48,7 +49,7 @@ public class Card {
         this.cardYoutChannerName = cardDto.getCardYoutChannerName();
         this.cardYoutDescription = cardDto.getCardYoutDescription();
         this.cardYoutRegData = cardDto.getCardYoutRegData();
-        this.playlist = cardDto.getPlaylist();
+        this.playlist = playlist;
     }
 
     public int getCardIdx() {

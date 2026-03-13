@@ -17,6 +17,7 @@
                 <div class="modal-body">
                     <p th:if="${error == 'invalidYouTubeLink'}"> 올바른 링크가 아닙니다</p>
                     <p th:if="${error == 'noVideoMetaDate'}"> 호환되지않는 링크입니다</p>
+                    <p th:if="${error == 'failedSaveCard'}"> 영상을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.</p>
                 </div>
 
                 <form action="/submitYoutubeLink" method="post">
