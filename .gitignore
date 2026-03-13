@@ -37,8 +37,10 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/application.properties
 
 # build artifacts / temp
 tmp_check/
+.gradle-home/
 *.jar
 *.class

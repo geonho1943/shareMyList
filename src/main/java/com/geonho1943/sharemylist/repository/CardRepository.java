@@ -4,18 +4,18 @@ import com.geonho1943.sharemylist.model.Card;
 import com.geonho1943.sharemylist.model.Playlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
-    List<Card> findByCardStatus(boolean b);
+    List<Card> findAllByCardStatusTrueOrderByCardIdxDesc();
 
-    Card findByCardIdxAndCardStatus(int cardIdx, boolean b);
+    Optional<Card> findByCardIdxAndCardStatusTrue(int cardIdx);
 
-    List<Card> findAllByPlaylistAndCardStatus(Playlist playlist, boolean b);
+    List<Card> findAllByPlaylistAndCardStatusTrueOrderByCardIdxDesc(Playlist playlist);
 
-    void deleteByCardIdx(int cardIdx);
-
-    List<Card> findAllByCardYoutTitleContaining(String cardTitle);
+    List<Card> findAllByCardYoutTitleContainingAndCardStatusTrueOrderByCardIdxDesc(String cardTitle);
 }

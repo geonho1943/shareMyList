@@ -93,4 +93,8 @@ public class User {
         this.userSalt = userSalt;
     }
 
+    public void setUserReg(LocalDateTime userReg) {
+        this.userReg = userReg;
+    }
+
 }
