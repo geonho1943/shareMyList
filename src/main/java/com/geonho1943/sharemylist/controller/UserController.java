@@ -2,13 +2,11 @@ package com.geonho1943.sharemylist.controller;
 
 import com.geonho1943.sharemylist.dto.PlaylistDto;
 import com.geonho1943.sharemylist.dto.UserDto;
-import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.PlaylistService;
 import com.geonho1943.sharemylist.service.RecordService;
 import com.geonho1943.sharemylist.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -19,15 +17,15 @@ import java.util.List;
 
 @Controller
 public class UserController {
+    private final UserService userService;
+    private final PlaylistService playlistService;
+    private final RecordService recordService;
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PlaylistService playlistService;
-    @Autowired
-    private CardService cardService;
-    @Autowired
-    private RecordService recordService;
+    public UserController(UserService userService, PlaylistService playlistService, RecordService recordService) {
+        this.userService = userService;
+        this.playlistService = playlistService;
+        this.recordService = recordService;
+    }
 
     @GetMapping("/login")
     public String userLogin() {

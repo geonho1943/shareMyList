@@ -3,21 +3,27 @@ package com.geonho1943.sharemylist.service;
 import com.geonho1943.sharemylist.dto.UserDto;
 import com.geonho1943.sharemylist.model.User;
 import com.geonho1943.sharemylist.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Objects;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public UserDto verification(UserDto userInfo) {
-        User userInfoByUserId = userRepository.findByUserId(userInfo.getUserId());
+        User userInfoByUserId = userRepository.findByUserId(userInfo.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다."));
         String hashedPassword = hashPassword(userInfo.getUserPw(), userInfoByUserId.getUserSalt());
         if (!Objects.equals(userInfoByUserId.getUserPw(), hashedPassword)){
             throw new IllegalArgumentException("입력된 정보와 일치하는 사용자가 없습니다.");
@@ -30,30 +36,27 @@ public class UserService {
         return new UserDto(userInfoByUserId);
     }
 
+    @Transactional
     public void resign(UserDto resignInfo) {
-        //회원탈퇴
-        if (resignInfo.isUserStatus()){
-            User resignInfoEntity = new User(resignInfo);
-            resignInfoEntity.setUserStatus(false);
-            userRepository.save(resignInfoEntity);
-        }else {
+        User resignInfoEntity = userRepository.findByUserIdx(resignInfo.getUserIdx())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계정입니다."));
+        if (!resignInfoEntity.isUserStatus()) {
             throw new IllegalArgumentException("이미 비활성화된 계정입니다.");
         }
+        resignInfoEntity.setUserStatus(false);
     }
 
+    @Transactional
     public void saveAccount(UserDto joinInfo) {
-        //회원 가입
         String salt = generateSalt();
-        //salt 생성
         String hashedPassword = hashPassword(joinInfo.getUserPw(), salt);
-        //비밀번호 해싱
 
-        // 회원 가입
         User joinInfoEntity = new User(joinInfo);
         joinInfoEntity.setUserStatus(true);
         joinInfoEntity.setUserPrivileges(1);
         joinInfoEntity.setUserSalt(salt);
         joinInfoEntity.setUserPw(hashedPassword);
+        joinInfoEntity.setUserReg(LocalDateTime.now());
         userRepository.save(joinInfoEntity);
         joinInfo.setUserIdx(joinInfoEntity.getUserIdx());
     }
@@ -97,8 +100,7 @@ public class UserService {
     }
 
     public boolean isDuplicateId(String userId) {
-        User user = userRepository.findByUserId(userId);
-        return user != null;
+        return userRepository.findByUserId(userId).isPresent();
     }
 
 }

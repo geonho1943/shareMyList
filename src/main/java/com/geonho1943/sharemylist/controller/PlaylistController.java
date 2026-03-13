@@ -7,7 +7,6 @@ import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.PlaylistService;
 import com.geonho1943.sharemylist.service.RecordService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,27 +15,21 @@ import java.util.List;
 
 @Controller
 public class PlaylistController {
+    private final CardService cardService;
+    private final PlaylistService playlistService;
+    private final RecordService recordService;
+    private final SessionUserHelper sessionUserHelper;
 
-    @Autowired
-    private CardService cardService;
-    @Autowired
-    private PlaylistService playlistService;
-    @Autowired
-    private RecordService recordService;
-
-    private UserDto addUserInfoToModel(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
-        if (loggedInUserInfo != null) {
-            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
-        }else {
-            model.addAttribute("error", "emptyUserInfo");
-        }
-        return loggedInUserInfo;
+    public PlaylistController(CardService cardService, PlaylistService playlistService, RecordService recordService, SessionUserHelper sessionUserHelper) {
+        this.cardService = cardService;
+        this.playlistService = playlistService;
+        this.recordService = recordService;
+        this.sessionUserHelper = sessionUserHelper;
     }
 
     @GetMapping("/playlist")
-    public String playlistUpload(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
+    public String playlist(HttpSession httpSession, Model model){
+        UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -47,8 +40,8 @@ public class PlaylistController {
     }
 
     @GetMapping("/createplaylist")
-    public String createPlayList(HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
+    public String createPlaylistPage(HttpSession httpSession, Model model){
+        UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -57,7 +50,7 @@ public class PlaylistController {
 
     @PostMapping("/createplaylist")
     public String createPlaylist(HttpSession httpSession, String playlistName){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        UserDto loggedInUserInfo = sessionUserHelper.getLoggedInUser(httpSession);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -68,8 +61,7 @@ public class PlaylistController {
 
     @GetMapping("/playlistInfo/{playlistIdx}")
     public String playlistInfo (@PathVariable int playlistIdx, HttpSession httpSession, Model model){
-        //playlist의 card 조회
-        UserDto loggedInUserInfo = addUserInfoToModel(httpSession, model);
+        UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
@@ -85,21 +77,23 @@ public class PlaylistController {
 
     @RequestMapping("/deletePlaylist/{playlistIdx}")
     public String deletePlaylist(@PathVariable int playlistIdx, HttpSession httpSession, Model model){
-        UserDto loggedInUserInfo = (UserDto) httpSession.getAttribute("checkedUserInfo");
+        UserDto loggedInUserInfo = sessionUserHelper.getLoggedInUser(httpSession);
+        if (loggedInUserInfo == null){
+            model.addAttribute("error", "emptyUserInfo");
+            return "user/userlogin";
+        }
         try {
-            // 유저 검즘
             if (!playlistService.isValidatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx())){
                 model.addAttribute("error","userCheck");
-                return "/playlist";
+                return "playlist/playlist";
             }
-            // plstlist 비활성화
             playlistService.deactivatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
             recordService.recordDeletePlaylist(loggedInUserInfo.getUserIdx());
             return "redirect:/playlist";
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
         }
-        return "/playlist";
+        return "playlist/playlist";
     }
 
 }
