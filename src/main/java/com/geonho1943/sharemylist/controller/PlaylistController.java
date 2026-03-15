@@ -27,15 +27,22 @@ public class PlaylistController {
         this.sessionUserHelper = sessionUserHelper;
     }
 
+    private void addPlaylistOptions(int userIdx, Model model) {
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByUser(userIdx);
+        if (userPlayList.isEmpty()) {
+            model.addAttribute("error", "emptyPlaylist");
+        } else {
+            model.addAttribute("playlistByUser", userPlayList);
+        }
+    }
+
     @GetMapping("/playlist")
     public String playlist(HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null){
             return "user/userlogin";
         }
-        List<PlaylistDto> userPlayList = playlistService.getPlaylistByUser(loggedInUserInfo.getUserIdx());
-        if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
-        else model.addAttribute("playlistByUser", userPlayList);
+        addPlaylistOptions(loggedInUserInfo.getUserIdx(), model);
         return "playlist/playlist";
     }
 
@@ -62,17 +69,21 @@ public class PlaylistController {
     @GetMapping("/playlistInfo/{playlistIdx}")
     public String playlistInfo (@PathVariable int playlistIdx, HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
-        if (loggedInUserInfo == null){
-            return "user/userlogin";
+        try {
+            List<CardDto> cardInfoList = cardService.findCardsByPlaylist(playlistIdx);
+            if (loggedInUserInfo != null) {
+                recordService.recordCheckPlaylist(loggedInUserInfo.getUserIdx());
+            }
+            if (cardInfoList.isEmpty()){
+                model.addAttribute("emptyData","emptyCardInfo");
+            }else {
+                model.addAttribute("cardInfoList",cardInfoList);
+            }
+            return "playlist/playlistinfo";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "playlist/playlistinfo";
         }
-        List<CardDto> cardInfoList = cardService.findCardsByPlaylist(playlistIdx);
-        recordService.recordCheckPlaylist(loggedInUserInfo.getUserIdx());
-        if (cardInfoList.isEmpty()){
-            model.addAttribute("emptyData","emptyCardInfo");
-        }else {
-            model.addAttribute("cardInfoList",cardInfoList);
-        }
-        return "playlist/playlistinfo";
     }
 
     @RequestMapping("/deletePlaylist/{playlistIdx}")
@@ -83,16 +94,13 @@ public class PlaylistController {
             return "user/userlogin";
         }
         try {
-            if (!playlistService.isValidatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx())){
-                model.addAttribute("error","userCheck");
-                return "playlist/playlist";
-            }
             playlistService.deactivatePlaylist(playlistIdx, loggedInUserInfo.getUserIdx());
             recordService.recordDeletePlaylist(loggedInUserInfo.getUserIdx());
             return "redirect:/playlist";
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
         }
+        addPlaylistOptions(loggedInUserInfo.getUserIdx(), model);
         return "playlist/playlist";
     }
 

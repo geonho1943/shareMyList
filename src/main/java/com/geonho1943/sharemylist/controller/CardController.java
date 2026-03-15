@@ -77,7 +77,7 @@ public class CardController {
         try {
             String videoId = cardService.parseYoutubeVideoId(youtubeLink);
             CardDto videoMetaData = cardService.getMetadataByYoutubeApi(videoId);
-            cardService.saveCardToPlaylist(videoMetaData, playlistIdx);
+            cardService.saveCardToPlaylist(videoMetaData, playlistIdx, loggedInUserInfo.getUserIdx());
             recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
             return "redirect:/playlistInfo/" + playlistIdx;
         }catch (IllegalArgumentException e){
@@ -92,13 +92,17 @@ public class CardController {
     @GetMapping("/cardInfo/{cardIdx}")
     public String cardInfo (@PathVariable int cardIdx, HttpSession httpSession, Model model){
         UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
-        if (loggedInUserInfo == null){
-            return "user/userlogin";
+        try {
+            CardDto cardInfo = cardService.getCardInfo(cardIdx);
+            if (loggedInUserInfo != null) {
+                recordService.recordCheckCard(loggedInUserInfo.getUserIdx());
+            }
+            model.addAttribute("cardInfo", cardInfo);
+            return "card/cardinfo";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "card/cardinfo";
         }
-        CardDto cardInfo = cardService.getCardInfo(cardIdx);
-        recordService.recordCheckCard(loggedInUserInfo.getUserIdx());
-        model.addAttribute("cardInfo", cardInfo);
-        return "card/cardinfo";
     }
 
     @RequestMapping("/deleteCard/{cardIdx}")
@@ -106,16 +110,16 @@ public class CardController {
         UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
         if (loggedInUserInfo == null) return "user/userlogin";
         try {
-            CardDto cardInfo = cardService.getCardInfo(cardIdx);
-            if (playlistService.isValidatePlaylist(cardInfo.getPlaylistIdx(), loggedInUserInfo.getUserIdx())){
-                cardService.deactivateCard(cardIdx);
-                recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
-                return "redirect:/playlistInfo/" + cardInfo.getPlaylistIdx();
-            }
+            int playlistIdx = cardService.deactivateCard(cardIdx, loggedInUserInfo.getUserIdx());
+            recordService.recordDeleteCard(loggedInUserInfo.getUserIdx());
+            return "redirect:/playlistInfo/" + playlistIdx;
         }catch (Exception e){
-            model.addAttribute("error", "failedDeleteByCardInfo");
+            model.addAttribute("error", e.getMessage());
         }
-        return "playlistinfo";
+        List<PlaylistDto> userPlayList = playlistService.getPlaylistByUser(loggedInUserInfo.getUserIdx());
+        if (userPlayList.isEmpty()) model.addAttribute("error", "emptyPlaylist");
+        else model.addAttribute("playlistByUser", userPlayList);
+        return "playlist/playlist";
     }
 
 }

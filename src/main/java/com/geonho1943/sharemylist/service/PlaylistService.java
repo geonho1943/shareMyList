@@ -41,16 +41,20 @@ public class PlaylistService {
         playlistRepository.save(playlist);
     }
 
-    public boolean isValidatePlaylist(int playlistIdx, int userIdx) {
+    private boolean hasPlaylistOwnership(int playlistIdx, int userIdx) {
         Playlist playlistToCheck = getPlaylistById(playlistIdx);
         return playlistToCheck.getUser().getUserIdx() == userIdx; //본인이면 true
     }
 
-    @Transactional
-    public void deactivatePlaylist(int playlistIdx, int userIdx) throws Exception {
-        if (!isValidatePlaylist(playlistIdx, userIdx)) {
-            throw new Exception("unableModifyPlaylist");
+    public void validatePlaylistOwnership(int playlistIdx, int userIdx) {
+        if (!hasPlaylistOwnership(playlistIdx, userIdx)) {
+            throw new IllegalArgumentException("userCheck");
         }
+    }
+
+    @Transactional
+    public void deactivatePlaylist(int playlistIdx, int userIdx) {
+        validatePlaylistOwnership(playlistIdx, userIdx);
         Playlist playlistCreatedByUser = getPlaylistById(playlistIdx);
         List<CardDto> cards = cardService.findCardsByPlaylist(playlistCreatedByUser.getPlaylistIdx());
         for (CardDto card : cards) {

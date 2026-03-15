@@ -121,8 +121,9 @@ public class CardService {
     }
 
     @Transactional
-    public void saveCardToPlaylist(CardDto videoMetaData, int playlistIdx) {
+    public void saveCardToPlaylist(CardDto videoMetaData, int playlistIdx, int userIdx) {
         Playlist playlist = getPlaylistById(playlistIdx);
+        validatePlaylistOwnership(playlist, userIdx);
         Card metadata = new Card(videoMetaData, playlist);
         metadata.setCardStatus(true);
         cardRepository.save(metadata);
@@ -142,6 +143,14 @@ public class CardService {
         card.setCardStatus(false);
     }
 
+    @Transactional
+    public int deactivateCard(int cardIdx, int userIdx) {
+        Card card = getActiveCard(cardIdx);
+        validateCardOwnership(card, userIdx);
+        card.setCardStatus(false);
+        return card.getPlaylist().getPlaylistIdx();
+    }
+
     public List<CardDto> findAllCardByTitle(String keyword) {
         return cardRepository.findAllByCardYoutTitleContainingAndCardStatusTrueOrderByCardIdxDesc(keyword).stream()
                 .map(CardDto::new)
@@ -156,6 +165,16 @@ public class CardService {
     private Playlist getPlaylistById(int playlistIdx) {
         return playlistRepository.findByPlaylistIdx(playlistIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플레이리스트입니다."));
+    }
+
+    private void validatePlaylistOwnership(Playlist playlist, int userIdx) {
+        if (playlist.getUser().getUserIdx() != userIdx) {
+            throw new IllegalArgumentException("userCheck");
+        }
+    }
+
+    private void validateCardOwnership(Card card, int userIdx) {
+        validatePlaylistOwnership(card.getPlaylist(), userIdx);
     }
 
 }
