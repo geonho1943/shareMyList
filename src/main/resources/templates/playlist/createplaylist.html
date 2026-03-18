@@ -14,8 +14,13 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
+      <div class="modal-body">
+        <p th:if="${error == 'invalidCsrfToken'}">요청 검증에 실패했습니다. 다시 시도해 주세요.</p>
+        <p th:if="${error == 'invalidSameSiteRequest'}">외부 페이지에서 시작된 요청은 처리할 수 없습니다.</p>
+      </div>
 
       <form th:action="@{/createplaylist}" method="post">
+        <input type="hidden" name="csrfToken" th:value="${csrfToken}">
         <label for="playlistName" class="form-label">제목</label>
         <input type="text" name="playlistName" placeholder="(제목 필수)" id="playlistName" class="form-control" aria-describedby="linkHelpBlock" required>
         <div id="linkHelpBlock1" class="form-text">

@@ -6,6 +6,8 @@ import com.geonho1943.sharemylist.dto.UserDto;
 import com.geonho1943.sharemylist.service.CardService;
 import com.geonho1943.sharemylist.service.PlaylistService;
 import com.geonho1943.sharemylist.service.RecordService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +21,14 @@ public class CardController {
     private final PlaylistService playlistService;
     private final RecordService recordService;
     private final SessionUserHelper sessionUserHelper;
+    private final RequestSecurityHelper requestSecurityHelper;
 
-    public CardController(CardService cardService, PlaylistService playlistService, RecordService recordService, SessionUserHelper sessionUserHelper) {
+    public CardController(CardService cardService, PlaylistService playlistService, RecordService recordService, SessionUserHelper sessionUserHelper, RequestSecurityHelper requestSecurityHelper) {
         this.cardService = cardService;
         this.playlistService = playlistService;
         this.recordService = recordService;
         this.sessionUserHelper = sessionUserHelper;
+        this.requestSecurityHelper = requestSecurityHelper;
     }
 
     private void addPlaylistOptions(UserDto loggedInUserInfo, Model model) {
@@ -67,25 +71,49 @@ public class CardController {
             return "user/userlogin";
         }
         addPlaylistOptions(loggedInUserInfo, model);
+        requestSecurityHelper.addSubmitYoutubeLinkCsrfToken(httpSession, model);
         return "playlist/linkupload";
     }
 
     @PostMapping("/submitYoutubeLink")
-    public String submitYoutubeLink(@RequestParam("youtubeLink") String youtubeLink, @RequestParam("playlistIdx") int playlistIdx, HttpSession httpSession, Model model) {
+    public String submitYoutubeLink(@RequestParam("youtubeLink") String youtubeLink,
+                                    @RequestParam("playlistIdx") int playlistIdx,
+                                    @RequestParam(value = "csrfToken", required = false) String csrfToken,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    HttpSession httpSession,
+                                    Model model) {
+        try {
+            requestSecurityHelper.validateSubmitYoutubeLinkRequest(request, httpSession, csrfToken);
+        }catch (IllegalArgumentException e){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            model.addAttribute("error", e.getMessage());
+            UserDto loggedInUserInfo = sessionUserHelper.getLoggedInUser(httpSession);
+            if (loggedInUserInfo == null) {
+                return "error/invalidrequest";
+            }
+            model.addAttribute("loggedInUserInfo", loggedInUserInfo);
+            addPlaylistOptions(loggedInUserInfo, model);
+            requestSecurityHelper.addSubmitYoutubeLinkCsrfToken(httpSession, model);
+            return "playlist/linkupload";
+        }
+
         UserDto loggedInUserInfo = sessionUserHelper.addUserInfoToModel(httpSession, model);
-        if (loggedInUserInfo == null) return "user/userlogin";
+        if (loggedInUserInfo == null) {
+            return "user/userlogin";
+        }
+
         try {
             String videoId = cardService.parseYoutubeVideoId(youtubeLink);
             CardDto videoMetaData = cardService.getMetadataByYoutubeApi(videoId);
             cardService.saveCardToPlaylist(videoMetaData, playlistIdx, loggedInUserInfo.getUserIdx());
             recordService.recordCreateCard(loggedInUserInfo.getUserIdx());
             return "redirect:/playlistInfo/" + playlistIdx;
-        }catch (IllegalArgumentException e){
-            model.addAttribute("error", e.getMessage());
         } catch (RuntimeException e) {
             model.addAttribute("error", "failedSaveCard");
         }
         addPlaylistOptions(loggedInUserInfo, model);
+        requestSecurityHelper.addSubmitYoutubeLinkCsrfToken(httpSession, model);
         return "playlist/linkupload";
     }
 
